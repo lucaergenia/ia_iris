@@ -1,0 +1,5 @@
+train: C:/Users/Luca Coronel/OneDrive/Escritorio/erg_matriculas/app/data/mg4_dataset/images/train
+val: C:/Users/Luca Coronel/OneDrive/Escritorio/erg_matriculas/app/data/mg4_dataset/images/train
+
+nc: 1
+names: ["MG 4 EV"]

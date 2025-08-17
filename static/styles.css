@@ -1,0 +1,147 @@
+/* Fuente moderna */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #0B0B0B;
+    font-family: 'Inter', sans-serif;
+    color: #F5F5F5;
+}
+
+/* Hero unificado con el main */
+.hero {
+    min-height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #0B0B0B;
+    padding: 40px 20px;
+}
+
+.hero-content {
+    max-width: 480px;
+}
+
+.logo {
+    width: 140px;
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #FF6600;
+    margin-bottom: 25px;
+}
+
+.hero button {
+    background-color: #FF6600;
+    border: none;
+    padding: 14px 32px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 50px;
+    box-shadow: 0 0 15px rgba(255, 102, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+.hero button:hover {
+    background-color: #FF7A1F;
+    box-shadow: 0 0 25px rgba(255, 102, 0, 0.6);
+    transform: scale(1.05);
+}
+
+/* Main Content unificado */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #0B0B0B;
+}
+
+/* Result Cards centradas y grandes */
+.resultados {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.card {
+    background-color: #1A1A1A;
+    border: 1px solid #2C2C2C;
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 0 20px rgba(255, 102, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 25px rgba(255, 102, 0, 0.2);
+}
+
+.card h2 {
+    color: #FF6600;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Botón ver más */
+.toggle-btn {
+    background-color: transparent;
+    color: #FF6600;
+    border: 1px solid #FF6600;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn:hover {
+    background-color: #FF6600;
+    color: #0B0B0B;
+}
+
+/* Contenido extra oculto por defecto */
+.extra-info {
+    display: none;
+    margin-top: 15px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
+    font-size: 0.9rem;
+}
+
+.card.expanded .extra-info {
+    display: block;
+}
+
+/* Estados */
+.loading {
+    text-align: center;
+    font-size: 1.2em;
+    color: #FF6600;
+}
+
+.error {
+    text-align: center;
+    color: #FF3B3B;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 18px;
+    font-size: 0.9rem;
+    color: #777;
+    background-color: #121212;
+    border-top: 1px solid #2C2C2C;
+}

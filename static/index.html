@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Matrículas - Ergenia</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <img src="/static/logo.png" alt="Logo Ergenia" class="logo">
+            <h1>   </h1>
+            <button id="procesarBtn">Procesar</button>
+        </div>
+    </section>
+
+    <main>
+        <section id="resultados" class="resultados"></section>
+    </main>
+
+    <script>
+        document.getElementById("procesarBtn").addEventListener("click", async () => {
+            const contenedor = document.getElementById("resultados");
+            contenedor.innerHTML = "<p class='loading'>Procesando video y detectando matrículas...</p>";
+
+            try {
+                const resp = await fetch("/procesar_matriculas");
+                const data = await resp.json();
+
+                contenedor.innerHTML = "";
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    contenedor.innerHTML = "<p>No se detectaron matrículas.</p>";
+                    return;
+                }
+
+                data.forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+
+                    // Construir lista de cargas por estación
+                    let estacionesHTML = "";
+                    if (item.cargas_por_estacion) {
+                        estacionesHTML = Object.entries(item.cargas_por_estacion)
+                            .map(([nombre, cantidad]) => `<li>${nombre}: ${cantidad}</li>`)
+                            .join("");
+                        estacionesHTML = `<ul>${estacionesHTML}</ul>`;
+                    }
+
+                    card.innerHTML = `
+                        <h2>${item.patente || "Matrícula desconocida"}</h2>
+                        <p><strong>Nombre:</strong> ${item.nombre || "-"}</p>
+                        <p><strong>Marca:</strong> ${item.marca || "-"}</p>
+                        <p><strong>Modelo:</strong> ${item.modelo || "-"}</p>
+                        <p><strong>Total de cargas:</strong> ${item.total_cargas || 0}</p>
+                        
+                        <button class="toggle-btn">Ver más</button>
+                        <div class="extra-info">
+                            <p><strong>Promedio tiempo de carga:</strong> ${item.promedio_tiempo_carga || 0} min</p>
+                            <p><strong>Promedio frecuencia entre cargas:</strong> ${item.promedio_frecuencia_horas || 0} horas</p>
+                            <p><strong>Cargas por estación:</strong></p>
+                            ${estacionesHTML || "<p>-</p>"}
+                            <p><strong>Energía total cargada:</strong> ${item.energia_total || 0} Wh</p>
+                            <p><strong>Gasto total:</strong> ${item.gasto_total || 0}</p>
+                            <p><strong>Cargas en el último mes:</strong> ${item.cargas_ultimo_mes || 0}</p>
+                            <p><strong>Velocidad promedio de carga:</strong> ${item.velocidad_promedio || 0} Wh/min</p>
+                            <p><strong>Tipo de propulsión:</strong> ${item.tipo_propulsion || "-"}</p>
+                        </div>
+                    `;
+
+                    contenedor.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error(error);
+                contenedor.innerHTML = "<p class='error'>Error procesando matrículas</p>";
+            }
+        });
+
+        // Listener para los botones "Ver más"
+        document.addEventListener("click", (e) => {
+            if (e.target.classList.contains("toggle-btn")) {
+                const card = e.target.closest(".card");
+                card.classList.toggle("expanded");
+                e.target.textContent = card.classList.contains("expanded") ? "Ver menos" : "Ver más";
+            }
+        });
+    </script>
+</body>
+</html>
