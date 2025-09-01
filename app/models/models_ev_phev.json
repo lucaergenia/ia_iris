@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "pais": "Colombia",
+    "corte_aproximado": "2025-08",
+    "fuentes": [
+      "CESVI/Revista Autocrash: Oferta de vehículos electrificados en Colombia (mayo-ago 2025)",
+      "ANDEMOS: Informes interactivos",
+      "RUNT (Datos Abiertos)"
+    ],
+    "notas": "Incluye normalización para hacer match con API de Etecnic"
+  },
+  "marcas": {
+    "Audi": {
+      "EV": ["Q8 e-tron", "Q8 Sportback e-tron"],
+      "PHEV": []
+    },
+    "BMW": {
+      "EV": ["i3", "i4", "i5", "i7", "iX1", "iX2", "iX", "i4 eDrive35"],
+      "PHEV": ["320e", "330e", "520e", "225xe", "X1 xDrive25e", "X3", "X5 xDrive50e", "XM"]
+    },
+    "BYD": {
+      "EV": ["Seagull", "Dolphin", "Yuan Up", "Yuan Plus", "Song Plus EV", "Tang EV", "Dolphin 44.9 kWh Active", "Seal U 71.8 kWh Comfort"],
+      "PHEV": ["Song Plus DM-i", "Song Plus"]
+    },
+    "Chevrolet": {
+      "EV": ["Bolt", "Bolt EV", "Equinox EV", "Blazer EV"],
+      "PHEV": []
+    },
+    "Mercedes-Benz": {
+      "EV": ["EQA 350 4MATIC", "EQA", "EQB", "EQC", "EQE", "EQS"],
+      "PHEV": ["GLC", "GLC 300e", "e350e (Clase C)"]
+    },
+    "MINI": {
+      "EV": ["Cooper E", "Cooper SE", "Countryman E", "Aceman"],
+      "PHEV": ["Countryman SE ALL4"]
+    },
+    "Renault": {
+      "EV": ["Kangoo E-Tech", "Kwid E-Tech", "Megane E-Tech", "Zoe", "5 E-Tech 52kWh 150hp"],
+      "PHEV": []
+    },
+    "Nissan": {
+      "EV": ["Leaf", "Leaf (Tekna)"],
+      "PHEV": []
+    },
+    "MG": {
+      "EV": ["MG4", "MG4 Electric 51 kWh", "MG4 Electric 64 kWh", "Marvel R", "Cyberster", "ZS EV", "ZS EV Standard Range"],
+      "PHEV": []
+    },
+    "Volvo": {
+      "EV": ["EX30", "EX40", "EC40", "EX90", "XC40", "XC90"],
+      "PHEV": ["XC60 Recharge T8", "XC90 Recharge T8"]
+    },
+    "Porsche": {
+      "EV": ["Taycan", "Taycan 4S", "Macan Electric", "Macan Turbo Electric"],
+      "PHEV": ["Cayenne E-Hybrid Coupé"]
+    },
+    "Peugeot": {
+      "EV": ["e-2008", "e-2008 54 kWh"],
+      "PHEV": []
+    },
+    "Suzuki": {
+      "EV": [],
+      "PHEV": ["Across"]
+    },
+    "Mazda": {
+      "EV": ["MX-30"],
+      "PHEV": []
+    },
+    "Zeekr": {
+      "EV": ["001", "001 Long Range RWD"],
+      "PHEV": []
+    },
+    "Kia": {
+      "EV": ["EV5", "EV6", "EV6 GT", "EV9"],
+      "PHEV": []
+    },
+    "Tesla": {
+      "EV": ["Model 3", "Model 3 Long Range Dual Motor"],
+      "PHEV": []
+    }
+  }
+}

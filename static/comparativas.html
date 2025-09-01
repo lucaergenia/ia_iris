@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRIS EV - Comparativas</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <main class="main">
+      <header class="header">
+        <div class="brand">
+          <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
+          <h1>Comparativas por estación</h1>
+        </div>
+        <div class="filters">
+          <select id="filterComparatives">
+            <option value="total">Total</option>
+            <option value="mes">Mensual</option>
+            <option value="diario">Diario</option>
+          </select>
+          <a href="/" class="btn-action" aria-label="Volver">← Volver</a>
+        </div>
+      </header>
+
+      <section class="comparatives">
+        <div id="comparativesContainer" class="comparatives-grid"></div>
+      </section>
+
+      <section class="charts">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Comparativa: Cargas / Usuarios / Energía</h3>
+            <canvas id="barsCanvas"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Distribución por estación: EV vs PHEV</h3>
+            <div class="pies-row">
+              <div class="pie-wrap">
+                <h4>Portobelo</h4>
+                <canvas id="piePorto"></canvas>
+              </div>
+              <div class="pie-wrap">
+                <h4>Salvio</h4>
+                <canvas id="pieSalvio"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/comparativas.js"></script>
+</body>
+</html>

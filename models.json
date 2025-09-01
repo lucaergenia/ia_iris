@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "pais": "Colombia",
+    "corte_aproximado": "2025-08",
+    "fuentes": [
+      "CESVI/Revista Autocrash: Oferta de vehículos electrificados en Colombia (mayo-ago 2025)",
+      "ANDEMOS: Informes interactivos (matrículas V. eléctricos e híbridos; V. por línea-modelo)",
+      "RUNT (Datos Abiertos): Número de Vehículos Eléctricos e Híbridos"
+    ],
+    "notas": "Listado armado a partir de oferta vigente y comunicada por marcas/importadores. ANDEMOS/RUNT se usan como trazabilidad de presencia y matrículas por línea; pueden existir altas/bajas recientes aún no reflejadas públicamente."
+  },
+  "marcas": {
+    "Audi": {
+      "EV": ["Q8 e-tron", "Q8 Sportback e-tron"],
+      "PHEV": []
+    },
+    "BMW": {
+      "EV": ["i4", "i5", "i7", "iX1", "iX2", "iX"],
+      "PHEV": ["X1 xDrive25e", "X5 xDrive50e", "XM", "330e"]
+    },
+    "BYD": {
+      "EV": ["Seagull", "Dolphin", "Yuan Up", "Yuan Plus", "Song Plus EV", "Tang EV"],
+      "PHEV": ["Song Plus DM-i"]
+    },
+    "Changan": {
+      "EV": ["Lumin"],
+      "PHEV": []
+    },
+    "Chery": {
+      "EV": [],
+      "PHEV": ["Tiggo 7 Pro PHEV", "Tiggo 8 Pro PHEV"]
+    },
+    "Chevrolet": {
+      "EV": ["Equinox EV", "Blazer EV"],
+      "PHEV": []
+    },
+    "Deepal": {
+      "EV": ["S07 (E-Max)"],
+      "PHEV": []
+    },
+    "DFSK": {
+      "EV": ["Seres 3", "Seres 5", "EC35"],
+      "PHEV": ["E5"]
+    },
+    "FAW": {
+      "EV": ["NAT (Taxi)"],
+      "PHEV": []
+    },
+    "Ford": {
+      "EV": ["E-Transit"],
+      "PHEV": []
+    },
+    "Foton": {
+      "EV": ["FKR EV"],
+      "PHEV": []
+    },
+    "GWM (Great Wall Motors)": {
+      "EV": ["ORA 03 / ORA 03 GT"],
+      "PHEV": []
+    },
+    "Hyundai": {
+      "EV": ["Kona Electric"],
+      "PHEV": []
+    },
+    "JAC": {
+      "EV": ["E10X"],
+      "PHEV": []
+    },
+    "Jeep": {
+      "EV": ["Avenger"],
+      "PHEV": []
+    },
+    "JMC": {
+      "EV": ["Grand Avenue (4x2)", "JMEV2", "JMEV3", "JMEV GSE"],
+      "PHEV": []
+    },
+    "Kia": {
+      "EV": ["EV5", "EV6", "EV9"],
+      "PHEV": []
+    },
+    "Land Rover": {
+      "EV": [],
+      "PHEV": ["Range Rover Velar PHEV", "Defender 110 2.0 PHEV", "Range Rover Sport PHEV"]
+    },
+    "Mercedes-Benz": {
+      "EV": ["eSprinter 314 (Panel)"],
+      "PHEV": ["e350e (Clase C)"]
+    },
+    "MG": {
+      "EV": ["MG4", "Marvel R", "Cyberster"],
+      "PHEV": []
+    },
+    "MINI": {
+      "EV": ["Cooper E", "Countryman E", "Aceman"],
+      "PHEV": []
+    },
+    "Nissan": {
+      "EV": ["Leaf (Tekna)"],
+      "PHEV": []
+    },
+    "Opel": {
+      "EV": ["Rocks-e"],
+      "PHEV": []
+    },
+    "Porsche": {
+      "EV": ["Taycan", "Taycan 4S", "Macan Electric"],
+      "PHEV": ["Cayenne E-Hybrid Coupé"]
+    },
+    "Renault": {
+      "EV": ["Kangoo E-Tech", "Kwid E-Tech", "Megane E-Tech"],
+      "PHEV": []
+    },
+    "Shineray": {
+      "EV": ["SWM G03 SUV EV"],
+      "PHEV": []
+    },
+    "Volvo": {
+      "EV": ["EX30", "EX40", "EC40", "EX90"],
+      "PHEV": ["XC60 Recharge T8", "XC90 Recharge T8"]
+    }
+  }
+}

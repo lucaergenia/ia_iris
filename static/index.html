@@ -1,91 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detector de Matrículas - Ergenia</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRIS EV Dashboard</title>
+  <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-    <section class="hero">
-        <div class="hero-content">
-            <img src="/static/logo.png" alt="Logo Ergenia" class="logo">
-            <h1>   </h1>
-            <button id="procesarBtn">Procesar</button>
+  <div class="dashboard">
+    <!-- Main Content (sin sidebar) -->
+    <main class="main">
+      <header class="header">
+        <div class="brand">
+          <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
+          <h1>Estadísticas de Carga</h1>
         </div>
-    </section>
+        <div class="filters">
+          <select id="stationSelect">
+            <option value="all" selected>Todas</option>
+            <option value="Portobelo">Portobelo</option>
+            <option value="Salvio">Salvio</option>
+          </select>
+          <select id="filterSelect">
+            <option value="total">Total</option>
+            <option value="mes">Mensual</option>
+            <option value="diario">Diario</option>
+          </select>
+          <a href="/usuarios.html" class="btn-action">Usuarios</a>
+          <a href="/comparativas.html" class="btn-action">Comparativas</a>
+        </div>
+      </header>
 
-    <main>
-        <section id="resultados" class="resultados"></section>
+      <!-- Estadísticas en tarjetas -->
+      <section class="cards">
+        <div class="card">
+          <h3>Total Cargas</h3>
+          <p id="totalCargas">0</p>
+        </div>
+        <div class="card">
+          <h3>Total Usuarios</h3>
+          <p id="totalUsuarios">0</p>
+        </div>
+        <div class="card">
+          <h3>Energía (Wh)</h3>
+          <p id="totalEnergia">0</p>
+        </div>
+        <div class="card">
+          <h3>Vehículos PHEV</h3>
+          <p id="cochesHibridos">0</p>
+        </div>
+        <div class="card">
+          <h3>Vehículos EV</h3>
+          <p id="cochesElectricos">0</p>
+        </div>
+        <div class="card">
+          <h3>Vehículos Totales</h3>
+          <p id="cochesTotales">0</p>
+        </div>
+      </section>
+
+      <!-- Gráficas -->
+      <section class="charts">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Cargas y Usuarios</h3>
+            <canvas id="barsCU"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Energía (Wh)</h3>
+            <canvas id="barsEnergy"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>EV vs PHEV</h3>
+            <canvas id="pieCanvas"></canvas>
+          </div>
+        </div>
+      </section>
+
+      
+
+      
     </main>
+  </div>
 
-    <script>
-        document.getElementById("procesarBtn").addEventListener("click", async () => {
-            const contenedor = document.getElementById("resultados");
-            contenedor.innerHTML = "<p class='loading'>Procesando video y detectando matrículas...</p>";
-
-            try {
-                const resp = await fetch("/procesar_matriculas");
-                const data = await resp.json();
-
-                contenedor.innerHTML = "";
-
-                if (!Array.isArray(data) || data.length === 0) {
-                    contenedor.innerHTML = "<p>No se detectaron matrículas.</p>";
-                    return;
-                }
-
-                data.forEach(item => {
-                    const card = document.createElement("div");
-                    card.className = "card";
-
-                    // Construir lista de cargas por estación
-                    let estacionesHTML = "";
-                    if (item.cargas_por_estacion) {
-                        estacionesHTML = Object.entries(item.cargas_por_estacion)
-                            .map(([nombre, cantidad]) => `<li>${nombre}: ${cantidad}</li>`)
-                            .join("");
-                        estacionesHTML = `<ul>${estacionesHTML}</ul>`;
-                    }
-
-                    card.innerHTML = `
-                        <h2>${item.patente || "Matrícula desconocida"}</h2>
-                        <p><strong>Nombre:</strong> ${item.nombre || "-"}</p>
-                        <p><strong>Marca:</strong> ${item.marca || "-"}</p>
-                        <p><strong>Modelo:</strong> ${item.modelo || "-"}</p>
-                        <p><strong>Total de cargas:</strong> ${item.total_cargas || 0}</p>
-                        
-                        <button class="toggle-btn">Ver más</button>
-                        <div class="extra-info">
-                            <p><strong>Promedio tiempo de carga:</strong> ${item.promedio_tiempo_carga || 0} min</p>
-                            <p><strong>Promedio frecuencia entre cargas:</strong> ${item.promedio_frecuencia_horas || 0} horas</p>
-                            <p><strong>Cargas por estación:</strong></p>
-                            ${estacionesHTML || "<p>-</p>"}
-                            <p><strong>Energía total cargada:</strong> ${item.energia_total || 0} Wh</p>
-                            <p><strong>Gasto total:</strong> ${item.gasto_total || 0}</p>
-                            <p><strong>Cargas en el último mes:</strong> ${item.cargas_ultimo_mes || 0}</p>
-                            <p><strong>Velocidad promedio de carga:</strong> ${item.velocidad_promedio || 0} Wh/min</p>
-                            <p><strong>Tipo de propulsión:</strong> ${item.tipo_propulsion || "-"}</p>
-                        </div>
-                    `;
-
-                    contenedor.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error(error);
-                contenedor.innerHTML = "<p class='error'>Error procesando matrículas</p>";
-            }
-        });
-
-        // Listener para los botones "Ver más"
-        document.addEventListener("click", (e) => {
-            if (e.target.classList.contains("toggle-btn")) {
-                const card = e.target.closest(".card");
-                card.classList.toggle("expanded");
-                e.target.textContent = card.classList.contains("expanded") ? "Ver menos" : "Ver más";
-            }
-        });
-    </script>
+  <script src="/static/scripts.js"></script>
 </body>
 </html>
