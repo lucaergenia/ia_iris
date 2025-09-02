@@ -1,6 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
   const stationSelect = document.getElementById("stationSelect");
   const filterSelect = document.getElementById("filterSelect");
+  const btnUnclassified = document.getElementById("btnUnclassified");
+  const panelUnc = document.getElementById("unclassifiedPanel");
+  const listUnc = document.getElementById("unclassifiedList");
+  const closeUnc = document.getElementById("closeUnclassified");
+  const openStreaming = document.getElementById("openStreaming");
+  const modal = document.getElementById("streamModal");
+  const modalImg = document.getElementById("rtspModalImg");
+  const closeBtn = document.getElementById("closeStreaming");
+  const backdrop = document.getElementById("streamBackdrop");
+  const resizeBtn = document.getElementById("resizeStreaming");
+  const fullscreenBtn = document.getElementById("fullscreenStreaming");
 
   loadStationData(stationSelect.value, filterSelect.value);
 
@@ -11,7 +22,60 @@ document.addEventListener("DOMContentLoaded", () => {
   filterSelect.addEventListener("change", () => {
     loadStationData(stationSelect.value, filterSelect.value);
   });
+
+  // Auto-actualización no intrusiva cada 60s
+  setInterval(() => {
+    loadStationData(stationSelect.value, filterSelect.value).catch(() => {});
+  }, 60000);
+
+  // Unclassified UI
+  if (btnUnclassified && panelUnc && listUnc) {
+    const toggle = async () => {
+      const opening = panelUnc.classList.contains('hidden');
+      if (opening) {
+        await renderUnclassified(listUnc, stationSelect.value, filterSelect.value);
+        panelUnc.classList.remove('hidden');
+        panelUnc.setAttribute('aria-hidden','false');
+      } else {
+        panelUnc.classList.add('hidden');
+        panelUnc.setAttribute('aria-hidden','true');
+      }
+    };
+    btnUnclassified.addEventListener('click', toggle);
+    closeUnc && closeUnc.addEventListener('click', () => {
+      panelUnc.classList.add('hidden');
+      panelUnc.setAttribute('aria-hidden','true');
+    });
+    // refrescar contenido si cambian filtros mientras está abierto
+    const refreshIfOpen = () => {
+      if (!panelUnc.classList.contains('hidden')) {
+        renderUnclassified(listUnc, stationSelect.value, filterSelect.value).catch(()=>{});
+      }
+    };
+    stationSelect.addEventListener('change', refreshIfOpen);
+    filterSelect.addEventListener('change', refreshIfOpen);
+  }
 });
+
+async function renderUnclassified(ul, station, filter){
+  const url = new URL('/api/stats/unclassified-models', window.location.origin);
+  url.searchParams.set('station', station || 'all');
+  url.searchParams.set('filter', filter || 'total');
+  const res = await fetch(url);
+  if(!res.ok){
+    ul.innerHTML = '<li>Error cargando no clasificados</li>';
+    return;
+  }
+  const data = await res.json();
+  const items = data.items || [];
+  ul.innerHTML = items.length
+    ? items.map(it => `<li>${escapeHtml((it.brand||'-') + ' ' + (it.model||'-'))} — ${it.count}</li>`).join('')
+    : '<li>No hay modelos sin clasificar</li>';
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
+}
 
 async function loadStationData(station, filter) {
   try {

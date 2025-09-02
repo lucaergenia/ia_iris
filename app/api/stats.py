@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.stats_flow.pipeline import run_pipeline
+from app.stats_flow.classifier import classify_single_vehicle
 from app.database.database import db, get_last_station_stats
 from app.services.station_stats import (
     get_station_summary,
@@ -170,6 +171,44 @@ def station_users(station: str, filter: str = "total"):
             u["model"] = info.get("model")
             u["category"] = info.get("category")
     return {"usuarios": usuarios}
+
+
+# ==========================
+# Modelos no clasificados
+# ==========================
+@router.get("/unclassified-models", tags=["stats"])  # /api/stats/unclassified-models
+def unclassified_models(station: str = "all", filter: str = "total"):
+    """
+    Lista agregada de modelos (brand+model) que no quedan clasificados como EV/PHEV
+    con la lógica actual. Útil para actualizar el JSON de modelos.
+    """
+
+    def _details_for(st: str):
+        doc = get_last_station_stats(st, filter) or get_last_station_stats(st)
+        return (doc or {}).get("details", [])
+
+    details = []
+    if station and station.lower() not in ("all", "todas"):
+        details = _details_for(station)
+    else:
+        details = _details_for("Portobelo") + _details_for("Salvio")
+
+    counter: dict[tuple[str, str], int] = {}
+    for d in details:
+        brand = d.get("brand") or ""
+        model = d.get("model") or ""
+        cat = classify_single_vehicle(brand, model)
+        if cat != "unclassified":
+            continue
+        key = (brand.strip(), model.strip())
+        counter[key] = counter.get(key, 0) + 1
+
+    items = [
+        {"brand": b, "model": m, "count": c}
+        for (b, m), c in counter.items()
+    ]
+    items.sort(key=lambda x: (-x["count"], x["brand"], x["model"]))
+    return {"items": items}
 
 @router.post("/stations/{station}/run", tags=["stats"])  # /api/stats/stations/{station}/run
 async def station_run(station: str, filter: str = "total"):

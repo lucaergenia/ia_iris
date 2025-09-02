@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRIS EV - Streaming</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <style>
+    .stream-wrap { display: flex; flex-direction: column; gap: 16px; }
+    .stream-toolbar { display: flex; gap: 12px; align-items: center; }
+    .stream-box { display: inline-block; background: transparent; border-radius: 14px; padding: 0; border: 2px solid #ff9800; box-shadow: 0 0 12px rgba(255,152,0,0.25); overflow: hidden; }
+    .stream-img { display: block; width: auto; max-width: 100%; height: auto; }
+    .stream-large .stream-img { width: 100%; height: auto; }
+  </style>
+  <script>
+    function toggleSize(){
+      const wrap = document.querySelector('.stream-box');
+      wrap.classList.toggle('stream-large');
+    }
+    function goFullscreen(){
+      const img = document.getElementById('rtspStream');
+      if (img.requestFullscreen) img.requestFullscreen();
+      else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+      else if (img.msRequestFullscreen) img.msRequestFullscreen();
+    }
+  </script>
+</head>
+<body>
+  <div class="dashboard">
+    <main class="main">
+      <header class="header">
+        <div class="brand">
+          <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
+          <h1>Streaming RTSP</h1>
+        </div>
+        <div class="filters">
+          <a href="/" class="btn-action">← Volver</a>
+        </div>
+      </header>
+
+      <section class="stream-wrap">
+        <div class="stream-toolbar">
+          <button class="btn-action" onclick="toggleSize()">Agrandar/Reducir</button>
+          <button class="btn-action" onclick="goFullscreen()">Pantalla completa</button>
+        </div>
+        <div class="stream-box">
+          <img id="rtspStream" class="stream-img" src="/api/stream/rtsp?q=95" alt="Streaming RTSP" />
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

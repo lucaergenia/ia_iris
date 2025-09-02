@@ -28,6 +28,8 @@
           </select>
           <a href="/usuarios.html" class="btn-action">Usuarios</a>
           <a href="/comparativas.html" class="btn-action">Comparativas</a>
+          <a href="/streaming/" class="btn-action">Streaming</a>
+          <button id="btnUnclassified" type="button" class="btn-action">No clasificados</button>
         </div>
       </header>
 
@@ -59,6 +61,16 @@
         </div>
       </section>
 
+      <!-- Panel: No clasificados -->
+      <section id="unclassifiedPanel" class="unclassified-panel hidden" aria-hidden="true">
+        <div class="unclassified-header">
+          <h4>No clasificados (por marca y modelo)</h4>
+          <button id="closeUnclassified" class="btn-action" aria-label="Cerrar">Cerrar</button>
+        </div>
+        <ul id="unclassifiedList" class="unclassified-list"></ul>
+      </section>
+
+
       <!-- Gráficas -->
       <section class="charts">
         <div class="charts-grid">
@@ -76,6 +88,8 @@
           </div>
         </div>
       </section>
+
+      
 
       
 
