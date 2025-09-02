@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ia-iris
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: API_KEY
+        sync: false
