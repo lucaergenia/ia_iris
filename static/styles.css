@@ -137,6 +137,121 @@ body {
 
 /* */
 
+/* ========== Top navigation (minimal) ========== */
+.topnav { position: relative; display: flex; align-items: center; gap: 16px; }
+.nav-toggle {
+  background:#1e1e1e;
+  color:#ff9800;
+  border:2px solid #ff9800;
+  border-radius:10px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:16px;
+  line-height:1;
+  appearance:none;
+  -webkit-appearance:none;
+}
+.nav-toggle:hover { background:#2a2a2a; }
+.nav-toggle:focus { outline:none; box-shadow:0 0 0 3px rgba(255,152,0,.35); }
+.nav-menu { position:absolute; right:0; top:44px; background:#1e1e1e; border:2px solid #ff9800; border-radius:16px; padding:12px; display:flex; gap:10px; flex-direction:column; min-width:260px; box-shadow:0 8px 20px rgba(0,0,0,.6); z-index: 50; }
+/* Items estilo tarjetas, solo texto */
+.nav-menu a, .nav-menu .nav-btn {
+  display: block;
+  color: #ddd;
+  text-decoration: none;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #2a2a2a;
+  background: #222;
+  text-align: left;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: .2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+.nav-menu a:hover, .nav-menu .nav-btn:hover {
+  background: #272727;
+  border-color: #ff9800;
+}
+.nav-menu .nav-btn { cursor:pointer; }
+.hidden { display:none; }
+
+/* User box */
+.userbox { position: relative; display:flex; align-items:center; gap:10px; margin-left: auto; }
+.user-name { color:#ccc; font-size:14px; }
+.user-email { color:#888; font-size:12px; }
+
+/* Avatar button (user icon) */
+.avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1e1e1e;
+  border: 2px solid #ff9800;
+  cursor: pointer;
+  padding: 0;
+}
+.avatar-btn:hover { background:#2a2a2a; }
+
+/* User dropdown menu */
+.user-menu {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  background:#1e1e1e;
+  border:2px solid #ff9800;
+  border-radius:12px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width: 280px; /* un poco más grande */
+  box-shadow:0 8px 20px rgba(0,0,0,.6);
+  z-index: 50;
+}
+.user-menu .user-info { border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px; }
+/* Mejor tipografía para nombre y email */
+.user-menu .user-name { font-size: 18px; font-weight: 700; color: #f5f5f5; }
+.user-menu .user-email { font-size: 13px; color: #bdbdbd; margin-top: 2px; }
+
+/* Logout button inside user menu */
+.user-menu .nav-btn {
+  color: #ff9800;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+}
+.user-menu .nav-btn:hover {
+  background: #2a2a2a;
+  border-color: #ff9800;
+}
+
+/* Controls (filters below header) */
+/* Drawer de filtros */
+.filters-toggle { margin: 0; }
+.drawer { position: fixed; right: 16px; top: 76px; width: 280px; background:#1e1e1e; border:2px solid #ff9800; border-radius:12px; box-shadow:0 12px 24px rgba(0,0,0,.6); padding:12px; z-index:60; }
+.drawer-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.drawer-header h4 { color:#ff9800; margin:0; }
+.drawer-body { display:flex; flex-direction:column; gap:10px; }
+.drawer-body label { color:#ccc; font-size:13px; }
+.drawer-body select {
+  background:#1e1e1e; color:#f5f5f5; padding:10px 16px; font-size:15px; font-weight:500;
+  border:2px solid #ff9800; border-radius:10px; cursor:pointer; outline:none; transition:all .2s ease; appearance:none;
+  background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'12'%20height%3D'8'%20viewBox%3D'0%200%2012%208'%20xmlns%3D'http://www.w3.org/2000/svg'%3E%3Cpath%20d%3D'M1.41%200L6%204.58%2010.59%200%2012%201.41%206%207.41%200%201.41z'%20fill%3D'%23ff9800'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; background-size:14px; min-width:160px;
+}
+.drawer-body select:hover { background:#222; box-shadow:0 4px 10px rgba(255,152,0,.3); }
+
 /* ===== Modal Streaming ===== */
 .modal.hidden { display: none; }
 .modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; }
@@ -284,6 +399,14 @@ body {
 .chart-card canvas { display: block; margin: 0 auto; }
 .pies-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: space-around; }
 .pie-wrap h4 { text-align: center; color: #ccc; margin-bottom: 8px; }
+
+/* ===== Login page tweaks ===== */
+/* Center brand logo inside login card */
+.login-card .brand-logo {
+  display: block;           /* already block, keep explicit */
+  margin-left: auto;        /* center horizontally */
+  margin-right: auto;
+}
 
 /* ==========================
    Responsive

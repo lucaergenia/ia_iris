@@ -21,6 +21,21 @@
             <option value="diario">Diario</option>
           </select>
           <a href="/" class="btn-action" aria-label="Volver">← Volver</a>
+          <div class="userbox">
+            <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="#ff9800" stroke-width="2"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#ff9800" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div id="userMenu" class="user-menu hidden" role="menu" aria-label="Cuenta">
+              <div class="user-info">
+                <div id="userFullName" class="user-name">-</div>
+                <div id="userEmail" class="user-email">-</div>
+              </div>
+              <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -52,6 +67,7 @@
     </main>
   </div>
 
+  <script src="/static/scripts.js"></script>
   <script src="/static/comparativas.js"></script>
 </body>
 </html>

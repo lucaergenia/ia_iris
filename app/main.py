@@ -1,16 +1,18 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, PlainTextResponse
+from fastapi.responses import StreamingResponse, PlainTextResponse, RedirectResponse
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.stats_flow.pipeline import run_pipeline
 import logging
 
-from app.api import stats
+from app.api import router as api_router
 from app.services.sync_etecnic import sync_etecnic_data
 from app.services.station_stats import run_station_pipeline
+from app.services.executive import materialize_all_scopes
 
 logging.basicConfig(level=logging.INFO)
+import os
 
 app = FastAPI()
 
@@ -24,7 +26,42 @@ app.add_middleware(
 )
 
 # Registrar las rutas de stats con prefijo /api/stats
-app.include_router(stats.router, prefix="/api/stats", tags=["stats"])
+app.include_router(api_router, prefix="/api/stats")
+
+# ============ Simple auth middleware (cookie-based) ============
+from app.auth.security import verify_access_token
+from app.database.database import db
+
+AUTH_REQUIRED = os.getenv("AUTH_REQUIRED", "true").lower() == "true"
+
+
+@app.middleware("http")
+async def auth_gate(request: Request, call_next):
+    if not AUTH_REQUIRED:
+        return await call_next(request)
+    path = request.url.path
+    # Allowlist for login and static assets
+    if (
+        path.startswith("/api/auth/") or
+        path.startswith("/api/stats/auth/") or  # permitir login bajo el prefijo /api/stats
+        path.startswith("/static/") or path == "/login.html" or path == "/favicon.ico"
+    ):
+        return await call_next(request)
+
+    token = request.cookies.get("access_token")
+    uid = verify_access_token(token or "")
+    if not uid:
+        if path.startswith("/api/"):
+            return PlainTextResponse("No autenticado", status_code=401)
+        return RedirectResponse(url="/login.html")
+
+    # Attach user info optionally
+    try:
+        from bson import ObjectId
+        request.state.user = db.users.find_one({"_id": ObjectId(uid)}, {"password_hash": 0})
+    except Exception:
+        request.state.user = None
+    return await call_next(request)
 
 """
 Streaming RTSP
@@ -124,6 +161,11 @@ def scheduled_sync():
                     await run_station_pipeline(st)
                 except Exception as e:
                     logging.error(f"❌ Error en pipeline estación {st}: {e}")
+            # KPIs ejecutivos materializados (global y por estación)
+            try:
+                materialize_all_scopes()
+            except Exception as e:
+                logging.error(f"❌ Error materializando KPIs ejecutivos: {e}")
 
         asyncio.run(full_refresh())
         logging.info("✅ Sincronización periódica completada")

@@ -3,27 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IRIS EV Dashboard</title>
+  <title>IRIS EV - Sostenibilidad</title>
   <link rel="stylesheet" href="/static/styles.css" />
-</head>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/static/logo.png" />
+  <style>
+    .assumptions { background:#1e1e1e; border-radius:12px; padding:16px; box-shadow:0 4px 10px rgba(0,0,0,.6); }
+    .assumptions h3 { color:#ff9800; margin-bottom:8px; }
+    .assumptions ul { list-style:none; color:#ccc; }
+    .assumptions li { margin: 6px 0; }
+  </style>
+  </head>
 <body>
   <div class="dashboard">
-    <!-- Main Content (sin sidebar) -->
     <main class="main">
       <header class="header">
         <div class="brand">
           <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
-          <h1>Estadísticas de Carga</h1>
+          <h1>Sostenibilidad</h1>
         </div>
         <nav class="topnav">
           <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
           <button id="filtersToggle" class="nav-toggle filters-toggle" aria-label="Abrir filtros" aria-expanded="false">Filtros ▾</button>
           <div id="navMenu" class="nav-menu hidden" role="menu">
+            <a href="/" role="menuitem">Dashboard</a>
             <a href="/conductores.html" role="menuitem">Conductores</a>
             <a href="/comparativas.html" role="menuitem">Comparativas</a>
             <a href="/streaming/" role="menuitem">Streaming</a>
             <a href="/executive/" role="menuitem">Vista ejecutiva</a>
-            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
           </div>
           <div class="userbox">
             <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
@@ -43,7 +50,6 @@
         </nav>
       </header>
 
-      <!-- Drawer de filtros (minimal) -->
       <aside id="filtersDrawer" class="drawer hidden" aria-hidden="true">
         <div class="drawer-header">
           <h4>Filtros</h4>
@@ -65,70 +71,49 @@
         </div>
       </aside>
 
-      <!-- Estadísticas en tarjetas -->
       <section class="cards">
         <div class="card">
-          <h3>Total Cargas</h3>
-          <p id="totalCargas">0</p>
+          <h3>Energía total (kWh)</h3>
+          <p id="totalKWh">0</p>
         </div>
         <div class="card">
-          <h3>Total Usuarios</h3>
-          <p id="totalUsuarios">0</p>
+          <h3>CO2 red (kg)</h3>
+          <p id="co2Red">0</p>
         </div>
         <div class="card">
-          <h3>Energía (Wh)</h3>
-          <p id="totalEnergia">0</p>
+          <h3>CO2 ICE eq. (kg)</h3>
+          <p id="co2ICE">0</p>
         </div>
         <div class="card">
-          <h3>Vehículos PHEV</h3>
-          <p id="cochesHibridos">0</p>
-        </div>
-        <div class="card">
-          <h3>Vehículos EV</h3>
-          <p id="cochesElectricos">0</p>
-        </div>
-        <div class="card">
-          <h3>Vehículos Totales</h3>
-          <p id="cochesTotales">0</p>
+          <h3>CO2 evitado (kg)</h3>
+          <p id="co2Evitado">0</p>
         </div>
       </section>
 
-      <!-- Panel: No clasificados -->
-      <section id="unclassifiedPanel" class="unclassified-panel hidden" aria-hidden="true">
-        <div class="unclassified-header">
-          <h4>No clasificados (por marca y modelo)</h4>
-          <button id="closeUnclassified" class="btn-action" aria-label="Cerrar">Cerrar</button>
-        </div>
-        <ul id="unclassifiedList" class="unclassified-list"></ul>
-      </section>
-
-
-      <!-- Gráficas -->
       <section class="charts">
         <div class="charts-grid">
           <div class="chart-card">
-            <h3>Cargas y Usuarios</h3>
-            <canvas id="barsCU"></canvas>
+            <h3>Energía por periodo</h3>
+            <canvas id="energySeries"></canvas>
           </div>
           <div class="chart-card">
-            <h3>Energía (Wh)</h3>
-            <canvas id="barsEnergy"></canvas>
+            <h3>Comparativo por 100 km</h3>
+            <canvas id="comp100km"></canvas>
           </div>
           <div class="chart-card">
-            <h3>EV vs PHEV</h3>
-            <canvas id="pieCanvas"></canvas>
+            <h3>Sensibilidad: factor de red</h3>
+            <canvas id="sensGrid"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Sensibilidad: eficiencia EV</h3>
+            <canvas id="sensEff"></canvas>
           </div>
         </div>
       </section>
 
-      
-
-      
-
-      
     </main>
   </div>
 
-  <script src="/static/scripts.js"></script>
-</body>
-</html>
+  <script src="/static/sostenibilidad.js"></script>
+  </body>
+  </html>

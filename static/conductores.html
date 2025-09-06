@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IRIS EV - Conductores</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <main class="main">
+      <header class="header">
+        <div class="brand">
+          <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
+          <h1>Conductores</h1>
+        </div>
+        <div class="filters">
+          <select id="stationSelect">
+            <option value="all" selected>Todas</option>
+            <option value="Portobelo">Portobelo</option>
+            <option value="Salvio">Salvio</option>
+          </select>
+          <select id="filterSelect">
+            <option value="total">Total</option>
+            <option value="mes">Mensual</option>
+            <option value="diario">Diario</option>
+          </select>
+          <button id="toggleUsers" class="btn-action" type="button">Ver conductores</button>
+          <a href="/" class="btn-action">← Volver</a>
+          <div class="userbox">
+            <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" stroke="#ff9800" stroke-width="2"/>
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#ff9800" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div id="userMenu" class="user-menu hidden" role="menu" aria-label="Cuenta">
+              <div class="user-info">
+                <div id="userFullName" class="user-name">-</div>
+                <div id="userEmail" class="user-email">-</div>
+              </div>
+              <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- KPIs en tarjetas -->
+      <section class="cards" style="margin-top:0; margin-bottom:24px">
+        <div class="card">
+          <h3>Conductores activos</h3>
+          <p id="kpiDrivers">0</p>
+        </div>
+        <div class="card">
+          <h3>Cargas totales</h3>
+          <p id="kpiCharges">0</p>
+        </div>
+        <div class="card">
+          <h3>Promedio cargas / conductor</h3>
+          <p id="kpiAvg">0</p>
+        </div>
+        <div class="card">
+          <h3>Top conductor</h3>
+          <p id="kpiTopDriver">-</p>
+        </div>
+      </section>
+
+      <!-- Estadísticas visuales -->
+      <section class="charts" style="margin-top:0">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Ranking de conductores más activos</h3>
+            <canvas id="rankingChart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Horarios habituales (general)</h3>
+            <canvas id="habitsGeneral"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Fidelidad: Recurrentes vs Nuevos</h3>
+            <canvas id="loyaltyChart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Listado de conductores (oculto hasta que se pulse el botón) -->
+      <section id="usersSection" class="users hidden" aria-hidden="true">
+        <h2 style="margin-bottom:12px">Cargas por conductor</h2>
+        <div id="conductoresContainer" class="user-cards"></div>
+        <div class="pagination">
+          <button id="prevPage">←</button>
+          <span id="pageInfo"></span>
+          <button id="nextPage">→</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+  <script src="/static/conductores.js"></script>
+</body>
+
+</html>

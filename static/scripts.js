@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Auth: fetch user and wire logout
+  bootstrapAuth();
   const stationSelect = document.getElementById("stationSelect");
   const filterSelect = document.getElementById("filterSelect");
+  const navToggle = document.getElementById("navToggle");
+  const navMenu = document.getElementById("navMenu");
+  const filtersToggle = document.getElementById('filtersToggle');
+  const filtersDrawer = document.getElementById('filtersDrawer');
+  const filtersClose = document.getElementById('filtersClose');
+  const userBtn = document.getElementById('userBtn');
+  const userMenu = document.getElementById('userMenu');
   const btnUnclassified = document.getElementById("btnUnclassified");
   const panelUnc = document.getElementById("unclassifiedPanel");
   const listUnc = document.getElementById("unclassifiedList");
@@ -55,7 +64,76 @@ document.addEventListener("DOMContentLoaded", () => {
     stationSelect.addEventListener('change', refreshIfOpen);
     filterSelect.addEventListener('change', refreshIfOpen);
   }
+
+  // Nav dropdown
+  if (navToggle && navMenu){
+    const close = () => { navMenu.classList.add('hidden'); navToggle.setAttribute('aria-expanded','false'); };
+    const open = () => { navMenu.classList.remove('hidden'); navToggle.setAttribute('aria-expanded','true'); };
+    navToggle.addEventListener('click', () => {
+      if (navMenu.classList.contains('hidden')) open(); else close();
+    });
+    document.addEventListener('click', (e) => {
+      if (!navMenu.contains(e.target) && e.target !== navToggle){ close(); }
+    });
+  }
+
+  // User dropdown
+  if (userBtn && userMenu){
+    const close = () => { userMenu.classList.add('hidden'); userBtn.setAttribute('aria-expanded','false'); };
+    const open = () => { userMenu.classList.remove('hidden'); userBtn.setAttribute('aria-expanded','true'); };
+    userBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (userMenu.classList.contains('hidden')) open(); else close();
+    });
+    document.addEventListener('click', (e) => {
+      if (!userMenu.contains(e.target) && e.target !== userBtn) close();
+    });
+  }
+
+  // Filters drawer
+  if (filtersToggle && filtersDrawer){
+    const openF = () => { filtersDrawer.classList.remove('hidden'); filtersDrawer.setAttribute('aria-hidden','false'); filtersToggle.setAttribute('aria-expanded','true'); };
+    const closeF = () => { filtersDrawer.classList.add('hidden'); filtersDrawer.setAttribute('aria-hidden','true'); filtersToggle.setAttribute('aria-expanded','false'); };
+    filtersToggle.addEventListener('click', () => {
+      const opened = !filtersDrawer.classList.contains('hidden');
+      if (opened) closeF(); else openF();
+    });
+    filtersClose && filtersClose.addEventListener('click', closeF);
+    document.addEventListener('click', (e)=>{
+      if (filtersDrawer.classList.contains('hidden')) return;
+      if (!filtersDrawer.contains(e.target) && e.target !== filtersToggle) closeF();
+    });
+    // Aplicar y cerrar al cambiar (opcional deja abierto)
+    stationSelect.addEventListener('change', () => closeF());
+    filterSelect.addEventListener('change', () => closeF());
+  }
 });
+
+async function bootstrapAuth(){
+  try{
+    const res = await fetch('/api/stats/auth/me');
+    if(res.status === 401){
+      window.location.href = '/login.html';
+      return;
+    }
+    const me = await res.json();
+    const userName = document.getElementById('userName');
+    if(userName) userName.textContent = me.name || me.email; // legacy element if present
+    const fullName = document.getElementById('userFullName');
+    const userEmail = document.getElementById('userEmail');
+    if(fullName) fullName.textContent = me.name || '-';
+    if(userEmail) userEmail.textContent = me.email || '';
+    const btn = document.getElementById('logoutBtn');
+    if(btn){
+      btn.addEventListener('click', async ()=>{
+        await fetch('/api/stats/auth/logout', { method: 'POST' });
+        window.location.href = '/login.html';
+      });
+    }
+  }catch(e){
+    window.location.href = '/login.html';
+  }
+}
 
 async function renderUnclassified(ul, station, filter){
   const url = new URL('/api/stats/unclassified-models', window.location.origin);
@@ -142,6 +220,61 @@ function drawCharts(stats) {
     ["#03A9F4", "#8BC34A"],
     ["EV", "PHEV"]
   );
+}
+
+async function loadEnergyData(station, filter){
+  try{
+    const params = new URLSearchParams({ station, filter });
+    const summaryRes = await fetch(`/api/stats/energy/summary?${params.toString()}`);
+    if (summaryRes.ok){
+      const summary = await summaryRes.json();
+      const el = document.getElementById('co2Evitado');
+      if (el) el.textContent = summary.co2_avoided_kg ?? 0;
+    }
+
+    // Elegir periodo por filtro por defecto
+    let period = 'month';
+    if (filter === 'mes') period = 'day';
+    if (filter === 'diario' || filter === 'dia') period = 'hour';
+    const seriesParams = new URLSearchParams({ station, filter, period });
+    const seriesRes = await fetch(`/api/stats/energy/series?${seriesParams.toString()}`);
+    if (seriesRes.ok){
+      const { series } = await seriesRes.json();
+      drawEnergySeries(series || [], period);
+    }
+  } catch(e){
+    console.warn('Sostenibilidad no disponible:', e);
+  }
+}
+
+function drawEnergySeries(series, period){
+  const canvas = document.getElementById('energySeries');
+  if (!canvas) return;
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const card = canvas.parentElement;
+  const W = Math.max(360, Math.min(1200, (card.clientWidth || 900) - 32));
+  const H = Math.max(380, Math.round(W * 0.6));
+  const ctx = setupCanvas(canvas, W, H, dpr);
+
+  // Preparar labels compactos y datos (limitar a 30 puntos para legibilidad)
+  let data = series || [];
+  if (data.length > 30) data = data.slice(-30);
+  const labels = data.map(d => formatPeriodLabel(d.period_start, period));
+  const values = data.map(d => d.energy_Wh || 0);
+  drawBarChartWithGrid(ctx, labels, values, ["#66BB6A"]);
+}
+
+function formatPeriodLabel(iso, period){
+  try{
+    const d = new Date(iso);
+    if (period === 'hour'){
+      return d.toLocaleTimeString([], {hour: '2-digit'});
+    }
+    if (period === 'day'){
+      return d.toLocaleDateString([], {month: 'short', day: '2-digit'});
+    }
+    return d.toLocaleDateString([], {year: '2-digit', month: 'short'});
+  }catch{ return ''; }
 }
 
 function setupCanvas(canvas, cssW, cssH, dpr) {

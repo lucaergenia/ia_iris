@@ -55,7 +55,8 @@ def get_station_summary(station_name: str, filter: str):
                 "_id": None,
                 "total_cargas": {"$sum": 1},
                 "total_usuarios": {"$addToSet": "$user_code"},
-                "total_energy_Wh": {"$sum": {"$toInt": "$energy_Wh"}}
+                "total_energy_Wh": {"$sum": {"$toInt": "$energy_Wh"}},
+                "total_ingresos": {"$sum": {"$toDouble": {"$ifNull": ["$amount", 0]}}}
             }
         }
     ]
@@ -69,6 +70,7 @@ def get_station_summary(station_name: str, filter: str):
         "total_cargas": r.get("total_cargas", 0),
         "total_usuarios": len(r.get("total_usuarios", [])),
         "total_energy_Wh": r.get("total_energy_Wh", 0),
+        "total_ingresos": r.get("total_ingresos", 0.0),
     }
 
 def get_user_summary(station_name: str, filter: str):
@@ -86,7 +88,8 @@ def get_user_summary(station_name: str, filter: str):
                 "_id": "$user_code",
                 "user_name": {"$first": "$user_name"},
                 "total_cargas": {"$sum": 1},
-                "total_energy_Wh": {"$sum": {"$toInt": "$energy_Wh"}}
+                "total_energy_Wh": {"$sum": {"$toInt": "$energy_Wh"}},
+                "total_ingresos": {"$sum": {"$toDouble": {"$ifNull": ["$amount", 0]}}}
             }
         },
         {"$sort": {"total_cargas": -1}}
