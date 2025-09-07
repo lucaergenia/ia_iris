@@ -111,8 +111,11 @@ async function loadRanking(station, filter){
     } else {
       document.getElementById('kpiTopDriver').textContent = '-';
     }
-    // Horizontal bars for clean labels
-    setupCanvas(canvas, 520, Math.max(220, 28 * labels.length + 40), Math.max(1, window.devicePixelRatio||1));
+    // Horizontal bars responsive: width from parent, height by rows
+    const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 520;
+    const width = Math.max(320, Math.min(920, parentW - 16));
+    const height = Math.max(220, Math.min(520, 28 * labels.length + 40));
+    setupCanvas(canvas, width, height, Math.max(1, window.devicePixelRatio||1));
     drawHBar(canvas, labels, values, '#ff9800');
   }catch(e){ console.error(e); }
 }
@@ -124,7 +127,9 @@ async function loadHabitsGeneral(station, filter){
     const data = await res.json();
     const canvas = document.getElementById('habitsGeneral');
     const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 600;
-    setupCanvas(canvas, Math.max(360, parentW - 32), 140, Math.max(1, window.devicePixelRatio||1));
+    // ancho seguro para móvil sin desbordar
+    const width = Math.max(260, parentW - 24);
+    setupCanvas(canvas, width, 140, Math.max(1, window.devicePixelRatio||1));
     drawHeatStrip(canvas, data.histogram || new Array(24).fill(0));
   }catch(e){ console.error(e); }
 }
@@ -136,7 +141,9 @@ async function loadLoyalty(station, filter){
     const data = await res.json();
     const canvas = document.getElementById('loyaltyChart');
     const dpr = Math.max(1, window.devicePixelRatio||1);
-    setupCanvas(canvas, 320, 240, dpr);
+    const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 360;
+    const width = Math.max(260, parentW - 24);
+    setupCanvas(canvas, width, 240, dpr);
     drawDonut(canvas, data.recurrentes||0, (data.recurrentes||0) + (data.nuevos||0));
   }catch(e){ console.error(e); }
 }
@@ -190,32 +197,46 @@ function drawHBar(canvas, labels, data, color){
   const dpr = Math.max(1, window.devicePixelRatio||1);
   const ctx = canvas.getContext('2d');
   const parentW = canvas.parentElement ? canvas.parentElement.clientWidth : 520;
-  const W = Math.max(360, Math.min(parentW - 16, 920));
+  const W = Math.max(320, Math.min(parentW - 16, 920));
   canvas.style.width = W + 'px';
   const H = parseInt(canvas.style.height)||260;
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.clearRect(0,0,W,H);
-  const left=140,right=24,top=8,bottom=8; const chartW=W-left-right; const rowH= (H-top-bottom)/Math.max(1, labels.length);
+  // Dynamic left margin: smaller on narrow screens to avoid clipping
+  const right=24,top=8,bottom=8;
+  const left = Math.min(140, Math.max(80, Math.floor(W * 0.22)));
+  const chartW=W-left-right; const rowH= (H-top-bottom)/Math.max(1, labels.length);
+  const endPad = 28; // reserva al extremo derecho para que la barra no toque el borde
+  const barMaxW = Math.max(40, chartW - endPad);
   const maxVal = Math.max(1, ...data);
   ctx.font='12px sans-serif';
   labels.forEach((lab,i)=>{
     const v = data[i]||0; const y = top + i*rowH + rowH*0.2; const h = Math.max(10, rowH*0.6);
-    const w = Math.max(2, Math.min(chartW - 6, (v/maxVal)*chartW));
+    // ancho de barra con margen al final para no sobresalir
+    const w = Math.max(2, Math.min(barMaxW, Math.round((v/maxVal) * barMaxW)));
     // Label (left)
     ctx.textAlign='right'; ctx.fillStyle='#ddd';
-    const label = lab.length>22 ? lab.slice(0,19) + '…' : lab;
+    const maxChars = W < 380 ? 14 : (W < 480 ? 18 : 22);
+    const label = lab.length>maxChars ? lab.slice(0,maxChars-3) + '…' : lab;
     ctx.fillText(label, left-8, y + h - 2);
     // Bar with rounded corners
     ctx.fillStyle=color;
     const r = Math.min(8, h/2);
     roundRect(ctx, left, y, w, h, r); ctx.fill();
-    // Value pill
-    ctx.fillStyle='#1e1e1e';
-    const pillW = 26, pillH = 16; const px = left + Math.max(2, Math.min(w - pillW - 4, chartW - pillW - 6)); const py = y + (h - pillH)/2;
-    if (w > pillW + 16){
-      ctx.fillStyle='rgba(0,0,0,0.35)'; roundRect(ctx, px, py, pillW, pillH, 8); ctx.fill();
-      ctx.fillStyle='#ff9800'; ctx.textAlign='center'; ctx.font='11px sans-serif'; ctx.fillText(String(v), px + pillW/2, py + pillH - 4);
+    // Value pill (si la barra es corta, mostrar al final, fuera pero dentro del área)
+    const pillW = 28, pillH = 16; const py = y + (h - pillH)/2;
+    let px = left + w - pillW - 6; // por defecto, dentro del final de la barra
+    let inside = true;
+    if (w < pillW + 12){
+      // barra muy corta: ubicar la píldora justo después de la barra, sin salir del chart
+      px = left + Math.min(barMaxW - pillW, w + 6);
+      inside = false;
     }
+    // Dibujar píldora y texto
+    ctx.fillStyle = inside ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.25)';
+    roundRect(ctx, px, py, pillW, pillH, 8); ctx.fill();
+    ctx.fillStyle='#ff9800'; ctx.textAlign='center'; ctx.font='11px sans-serif';
+    ctx.fillText(String(v), px + pillW/2, py + pillH - 4);
   });
 }
 

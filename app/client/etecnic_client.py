@@ -3,15 +3,14 @@ import os
 import httpx
 from dotenv import load_dotenv
 import requests 
+import logging
 load_dotenv()
 
 ETECNIC_STATS_URL = os.getenv("ETECNIC_STATS_URL", "https://etecnic.net/api/v1/etecnic/charger/charges")
 API_KEY = os.getenv("ETECNIC_BEARER_TOKEN")
 
 HEADERS = {"Authorization": f"Bearer {API_KEY}"}
-
-print(f"🔑 API_KEY: {repr(API_KEY)}")
-print(f"📡 Headers enviados: {HEADERS}")
+logger = logging.getLogger(__name__)
 
 async def get_charger_charges(charger_id: int) -> dict:
     """
@@ -27,7 +26,8 @@ async def get_charger_charges(charger_id: int) -> dict:
                 response = await client.get(url, headers=HEADERS)
 
                 if response.status_code != 200:
-                    print(f"Error en la solicitud: {response.status_code} - {response.text}")
+                    # se suprime log en consola en producción; usar nivel debug para troubleshooting
+                    logger.debug("ETECNIC charges request failed: %s - %s", response.status_code, response.text)
                     break
 
                 data = response.json()
@@ -50,7 +50,7 @@ async def get_charger_charges(charger_id: int) -> dict:
         }
 
     except Exception as e:
-        print(f"Excepción durante la solicitud: {e}")
+        logger.debug("Excepción durante la solicitud ETECNIC: %s", e)
     return {"charger_id": charger_id, "charges": []}
 
 

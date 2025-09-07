@@ -22,27 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const resizeBtn = document.getElementById("resizeStreaming");
   const fullscreenBtn = document.getElementById("fullscreenStreaming");
 
-  loadStationData(stationSelect.value, filterSelect.value);
-
-  stationSelect.addEventListener("change", () => {
+  if (stationSelect && filterSelect) {
     loadStationData(stationSelect.value, filterSelect.value);
-  });
-
-  filterSelect.addEventListener("change", () => {
-    loadStationData(stationSelect.value, filterSelect.value);
-  });
-
-  // Auto-actualización no intrusiva cada 60s
-  setInterval(() => {
-    loadStationData(stationSelect.value, filterSelect.value).catch(() => {});
-  }, 60000);
+    stationSelect.addEventListener("change", () => {
+      loadStationData(stationSelect.value, filterSelect.value);
+    });
+    filterSelect.addEventListener("change", () => {
+      loadStationData(stationSelect.value, filterSelect.value);
+    });
+    // Auto-actualización no intrusiva cada 60s
+    setInterval(() => {
+      loadStationData(stationSelect.value, filterSelect.value).catch(() => {});
+    }, 60000);
+  }
 
   // Unclassified UI
   if (btnUnclassified && panelUnc && listUnc) {
     const toggle = async () => {
       const opening = panelUnc.classList.contains('hidden');
       if (opening) {
-        await renderUnclassified(listUnc, stationSelect.value, filterSelect.value);
+        const st = stationSelect ? stationSelect.value : 'all';
+        const flt = filterSelect ? filterSelect.value : 'total';
+        await renderUnclassified(listUnc, st, flt);
         panelUnc.classList.remove('hidden');
         panelUnc.setAttribute('aria-hidden','false');
       } else {
@@ -58,11 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
     // refrescar contenido si cambian filtros mientras está abierto
     const refreshIfOpen = () => {
       if (!panelUnc.classList.contains('hidden')) {
-        renderUnclassified(listUnc, stationSelect.value, filterSelect.value).catch(()=>{});
+        const st = stationSelect ? stationSelect.value : 'all';
+        const flt = filterSelect ? filterSelect.value : 'total';
+        renderUnclassified(listUnc, st, flt).catch(()=>{});
       }
     };
-    stationSelect.addEventListener('change', refreshIfOpen);
-    filterSelect.addEventListener('change', refreshIfOpen);
+    stationSelect && stationSelect.addEventListener('change', refreshIfOpen);
+    filterSelect && filterSelect.addEventListener('change', refreshIfOpen);
   }
 
   // Nav dropdown
@@ -104,8 +107,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!filtersDrawer.contains(e.target) && e.target !== filtersToggle) closeF();
     });
     // Aplicar y cerrar al cambiar (opcional deja abierto)
-    stationSelect.addEventListener('change', () => closeF());
-    filterSelect.addEventListener('change', () => closeF());
+    stationSelect && stationSelect.addEventListener('change', () => closeF());
+    filterSelect && filterSelect.addEventListener('change', () => closeF());
   }
 });
 

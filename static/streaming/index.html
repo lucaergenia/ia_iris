@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IRIS EV - Streaming</title>
   <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/hardening.js"></script>
   <style>
     .stream-wrap { display: flex; flex-direction: column; gap: 16px; }
     .stream-toolbar { display: flex; gap: 12px; align-items: center; }
@@ -33,8 +34,15 @@
           <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
           <h1>Streaming RTSP</h1>
         </div>
-        <div class="filters">
-          <a href="/" class="btn-action">← Volver</a>
+        <nav class="topnav">
+          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+          <div id="navMenu" class="nav-menu hidden" role="menu">
+            <a href="/" role="menuitem">Dashboard</a>
+            <a href="/conductores.html" role="menuitem">Conductores</a>
+            <a href="/comparativas.html" role="menuitem">Comparativas</a>
+            <a href="/executive/" role="menuitem">Vista ejecutiva</a>
+            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
+          </div>
           <div class="userbox">
             <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -50,7 +58,7 @@
               <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
             </div>
           </div>
-        </div>
+        </nav>
       </header>
 
       <section class="stream-wrap">

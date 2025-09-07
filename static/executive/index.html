@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vista Ejecutiva</title>
   <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/hardening.js"></script>
   <style>
     .kpi-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px; }
     .kpi-card { background:#1e1e1e; border-radius: 14px; padding: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); text-align: center; }
@@ -20,16 +21,16 @@
           <img src="/static/logo.png" class="brand-logo" alt="Logo" />
           <h1>Vista Ejecutiva</h1>
         </div>
-        <div class="filters">
-          <select id="stationExec">
-            <option value="all" selected>Todas</option>
-            <option value="Portobelo">Portobelo</option>
-            <option value="Salvio">Salvio</option>
-          </select>
-          <select id="monthExec">
-            <option value="">Mes actual</option>
-          </select>
-          <a href="/" class="btn-action">← Volver</a>
+        <nav class="topnav">
+          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+          <button id="filtersToggle" class="nav-toggle filters-toggle" aria-label="Abrir filtros" aria-expanded="false">Filtros ▾</button>
+          <div id="navMenu" class="nav-menu hidden" role="menu">
+            <a href="/" role="menuitem">Dashboard</a>
+            <a href="/conductores.html" role="menuitem">Conductores</a>
+            <a href="/comparativas.html" role="menuitem">Comparativas</a>
+            <a href="/streaming/" role="menuitem">Streaming</a>
+            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
+          </div>
           <div class="userbox">
             <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -45,8 +46,28 @@
               <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
             </div>
           </div>
-        </div>
+        </nav>
       </header>
+
+      <!-- Drawer de filtros -->
+      <aside id="filtersDrawer" class="drawer hidden" aria-hidden="true">
+        <div class="drawer-header">
+          <h4>Filtros</h4>
+          <button id="filtersClose" class="btn-action">Cerrar</button>
+        </div>
+        <div class="drawer-body">
+          <label for="stationExec">Estación</label>
+          <select id="stationExec">
+            <option value="all" selected>Todas</option>
+            <option value="Portobelo">Portobelo</option>
+            <option value="Salvio">Salvio</option>
+          </select>
+          <label for="monthExec">Mes</label>
+          <select id="monthExec">
+            <option value="">Mes actual</option>
+          </select>
+        </div>
+      </aside>
 
       <section class="kpi-cards">
         <div class="kpi-card"><h3>Clientes activos</h3><p id="kpiActive">0</p></div>

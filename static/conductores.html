@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IRIS EV - Conductores</title>
   <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/hardening.js"></script>
 </head>
 <body>
   <div class="dashboard">
@@ -14,19 +15,16 @@
           <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
           <h1>Conductores</h1>
         </div>
-        <div class="filters">
-          <select id="stationSelect">
-            <option value="all" selected>Todas</option>
-            <option value="Portobelo">Portobelo</option>
-            <option value="Salvio">Salvio</option>
-          </select>
-          <select id="filterSelect">
-            <option value="total">Total</option>
-            <option value="mes">Mensual</option>
-            <option value="diario">Diario</option>
-          </select>
-          <button id="toggleUsers" class="btn-action" type="button">Ver conductores</button>
-          <a href="/" class="btn-action">← Volver</a>
+        <nav class="topnav">
+          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+          <button id="filtersToggle" class="nav-toggle filters-toggle" aria-label="Abrir filtros" aria-expanded="false">Filtros ▾</button>
+          <div id="navMenu" class="nav-menu hidden" role="menu">
+            <a href="/" role="menuitem">Estadisticas de Carga</a>
+            <a href="/comparativas.html" role="menuitem">Comparativas</a>
+            <a href="/streaming/" role="menuitem">Streaming</a>
+            <a href="/executive/" role="menuitem">Vista ejecutiva</a>
+            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
+          </div>
           <div class="userbox">
             <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -42,8 +40,31 @@
               <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
             </div>
           </div>
-        </div>
+        </nav>
       </header>
+
+      <!-- Drawer de filtros -->
+      <aside id="filtersDrawer" class="drawer hidden" aria-hidden="true">
+        <div class="drawer-header">
+          <h4>Filtros</h4>
+          <button id="filtersClose" class="btn-action">Cerrar</button>
+        </div>
+        <div class="drawer-body">
+          <label for="stationSelect">Estación</label>
+          <select id="stationSelect" aria-label="Estación">
+            <option value="all" selected>Todas</option>
+            <option value="Portobelo">Portobelo</option>
+            <option value="Salvio">Salvio</option>
+          </select>
+          <label for="filterSelect">Rango</label>
+          <select id="filterSelect" aria-label="Rango">
+            <option value="total">Total</option>
+            <option value="mes">Mensual</option>
+            <option value="diario">Diario</option>
+          </select>
+          <button id="toggleUsers" class="btn-action" type="button">Ver conductores</button>
+        </div>
+      </aside>
 
       <!-- KPIs en tarjetas -->
       <section class="cards" style="margin-top:0; margin-bottom:24px">

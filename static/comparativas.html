@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IRIS EV - Comparativas</title>
   <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/hardening.js"></script>
 </head>
 <body>
   <div class="dashboard">
@@ -14,13 +15,16 @@
           <img src="/static/logo.png" alt="Logo Ergenia" class="brand-logo" />
           <h1>Comparativas por estación</h1>
         </div>
-        <div class="filters">
-          <select id="filterComparatives">
-            <option value="total">Total</option>
-            <option value="mes">Mensual</option>
-            <option value="diario">Diario</option>
-          </select>
-          <a href="/" class="btn-action" aria-label="Volver">← Volver</a>
+        <nav class="topnav">
+          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+          <button id="filtersToggle" class="nav-toggle filters-toggle" aria-label="Abrir filtros" aria-expanded="false">Filtros ▾</button>
+          <div id="navMenu" class="nav-menu hidden" role="menu">
+            <a href="/" role="menuitem">Dashboard</a>
+            <a href="/conductores.html" role="menuitem">Conductores</a>
+            <a href="/streaming/" role="menuitem">Streaming</a>
+            <a href="/executive/" role="menuitem">Vista ejecutiva</a>
+            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
+          </div>
           <div class="userbox">
             <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -36,8 +40,23 @@
               <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
             </div>
           </div>
-        </div>
+        </nav>
       </header>
+
+      <aside id="filtersDrawer" class="drawer hidden" aria-hidden="true">
+        <div class="drawer-header">
+          <h4>Filtros</h4>
+          <button id="filtersClose" class="btn-action">Cerrar</button>
+        </div>
+        <div class="drawer-body">
+          <label for="filterComparatives">Rango</label>
+          <select id="filterComparatives">
+            <option value="total">Total</option>
+            <option value="mes">Mensual</option>
+            <option value="diario">Diario</option>
+          </select>
+        </div>
+      </aside>
 
       <section class="comparatives">
         <div id="comparativesContainer" class="comparatives-grid"></div>

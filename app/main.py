@@ -11,8 +11,37 @@ from app.services.sync_etecnic import sync_etecnic_data
 from app.services.station_stats import run_station_pipeline
 from app.services.executive import materialize_all_scopes
 
-logging.basicConfig(level=logging.INFO)
 import os
+
+# ==== Logging policy (silence logs in production) ====
+LOG_LEVEL_NAME = os.getenv("LOG_LEVEL", "WARNING").upper()
+LOG_LEVEL = getattr(logging, LOG_LEVEL_NAME, logging.WARNING)
+logging.basicConfig(level=LOG_LEVEL)
+
+# Reduce noisy third‑party loggers
+for name in (
+    "httpx",
+    "apscheduler",
+    "apscheduler.scheduler",
+    "apscheduler.executors.default",
+    "uvicorn",
+    "uvicorn.error",
+):
+    try:
+        logging.getLogger(name).setLevel(LOG_LEVEL)
+    except Exception:
+        pass
+
+# Access log (HTTP request per line) can leak info; disable by default
+if os.getenv("ACCESS_LOG_DISABLED", "true").lower() == "true":
+    try:
+        al = logging.getLogger("uvicorn.access")
+        al.setLevel(logging.CRITICAL)
+        al.propagate = False
+        al.disabled = True
+        al.handlers = []
+    except Exception:
+        pass
 
 app = FastAPI()
 
@@ -72,7 +101,7 @@ from typing import Optional
 
 # Log dedicado para streaming
 stream_logger = logging.getLogger("streaming.rtsp")
-stream_logger.setLevel(logging.INFO)
+stream_logger.setLevel(LOG_LEVEL)
 
 _RTSPCamera = None
 _build_url = None
