@@ -7,11 +7,11 @@
   <link rel="stylesheet" href="/static/styles.css" />
   <script src="/static/hardening.js"></script>
   <style>
-    .stream-wrap { display: flex; flex-direction: column; gap: 16px; }
-    .stream-toolbar { display: flex; gap: 12px; align-items: center; }
-    .stream-box { display: inline-block; background: transparent; border-radius: 14px; padding: 0; border: 2px solid #ff9800; box-shadow: 0 0 12px rgba(255,152,0,0.25); overflow: hidden; }
-    .stream-img { display: block; width: auto; max-width: 100%; height: auto; }
-    .stream-large .stream-img { width: 100%; height: auto; }
+    .grid-streams { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 12px; }
+    .tile { background: #1e1e1e; border: 1px solid #333; border-radius: 10px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+    .tile h4 { color:#ff9800; font-size: 14px; margin: 0 0 6px; }
+    .tile img { display:block; width:100%; height:auto; border-radius:6px; }
+    @media (max-width: 680px){ .grid-streams { grid-template-columns: 1fr; } }
   </style>
   <script>
     function toggleSize(){
@@ -28,6 +28,24 @@
 </head>
 <body>
   <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="/static/logo.png" alt="IRIS" class="logo-img" />
+        <span>IRIS</span>
+      </div>
+      <nav>
+        <a href="/">Dashboard</a>
+        <a href="/conductores.html">Conductores</a>
+        <a href="/sostenibilidad.html">Sostenibilidad</a>
+        <a href="/streaming/" class="active">Streaming</a>
+        <a href="/executive/">Vista ejecutiva</a>
+      </nav>
+      <div class="user-footer">
+        <div id="userFullName" class="user-name">-</div>
+        <div id="userEmail" class="user-email">-</div>
+        <button id="logoutBtn" class="nav-btn" type="button">Salir</button>
+      </div>
+    </aside>
     <main class="main">
       <header class="header">
         <div class="brand">
@@ -35,39 +53,17 @@
           <h1>Streaming RTSP</h1>
         </div>
         <nav class="topnav">
-          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-          <div id="navMenu" class="nav-menu hidden" role="menu">
-            <a href="/" role="menuitem">Dashboard</a>
-            <a href="/conductores.html" role="menuitem">Conductores</a>
-            <a href="/comparativas.html" role="menuitem">Comparativas</a>
-            <a href="/executive/" role="menuitem">Vista ejecutiva</a>
-            <a href="/sostenibilidad.html" role="menuitem">Sostenibilidad</a>
-          </div>
-          <div class="userbox">
-            <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="12" cy="8" r="4" stroke="#ff9800" stroke-width="2"/>
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#ff9800" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div id="userMenu" class="user-menu hidden" role="menu" aria-label="Cuenta">
-              <div class="user-info">
-                <div id="userFullName" class="user-name">-</div>
-                <div id="userEmail" class="user-email">-</div>
-              </div>
-              <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
-            </div>
-          </div>
+          <button id="stationsToggle" class="nav-toggle" aria-label="Abrir estaciones" aria-expanded="false">Estaciones ▾</button>
+          <div id="stationsMenu" class="nav-menu hidden" role="menu" aria-label="Estaciones"></div>
         </nav>
       </header>
 
-      <section class="stream-wrap">
-        <div class="stream-toolbar">
-          <button class="btn-action" onclick="toggleSize()">Agrandar/Reducir</button>
-          <button class="btn-action" onclick="goFullscreen()">Pantalla completa</button>
-        </div>
-        <div class="stream-box">
-          <img id="rtspStream" class="stream-img" src="/api/stream/rtsp?q=95" alt="Streaming RTSP" />
+      <section>
+        <div class="grid-streams">
+          <div class="tile"><h4>rtsp://190.159.37.81:554/profile1</h4><img src="/api/stream/rtsp?url=rtsp://190.159.37.81:554/profile1&width=480&q=85" alt="rtsp://190.159.37.81:554/profile1" /></div>
+          <div class="tile"><h4>rtsp://190.159.37.81:556/profile1</h4><img src="/api/stream/rtsp?url=rtsp://190.159.37.81:556/profile1&width=480&q=85" alt="rtsp://190.159.37.81:556/profile1" /></div>
+          <div class="tile"><h4>rtsp://190.159.37.81:557/profile1</h4><img src="/api/stream/rtsp?url=rtsp://190.159.37.81:557/profile1&width=480&q=85" alt="rtsp://190.159.37.81:557/profile1" /></div>
+          <div class="tile"><h4>rtsp://190.159.37.81:558/profile1</h4><img src="/api/stream/rtsp?url=rtsp://190.159.37.81:558/profile1&width=480&q=85" alt="rtsp://190.159.37.81:558/profile1" /></div>
         </div>
       </section>
     </main>

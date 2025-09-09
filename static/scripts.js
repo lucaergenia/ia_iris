@@ -1,15 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Auth: fetch user and wire logout
   bootstrapAuth();
-  const stationSelect = document.getElementById("stationSelect");
   const filterSelect = document.getElementById("filterSelect");
-  const navToggle = document.getElementById("navToggle");
-  const navMenu = document.getElementById("navMenu");
   const filtersToggle = document.getElementById('filtersToggle');
   const filtersDrawer = document.getElementById('filtersDrawer');
   const filtersClose = document.getElementById('filtersClose');
   const userBtn = document.getElementById('userBtn');
   const userMenu = document.getElementById('userMenu');
+  const stationsToggle = document.getElementById('stationsToggle');
+  const stationsMenu = document.getElementById('stationsMenu');
   const btnUnclassified = document.getElementById("btnUnclassified");
   const panelUnc = document.getElementById("unclassifiedPanel");
   const listUnc = document.getElementById("unclassifiedList");
@@ -22,17 +21,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const resizeBtn = document.getElementById("resizeStreaming");
   const fullscreenBtn = document.getElementById("fullscreenStreaming");
 
-  if (stationSelect && filterSelect) {
-    loadStationData(stationSelect.value, filterSelect.value);
-    stationSelect.addEventListener("change", () => {
-      loadStationData(stationSelect.value, filterSelect.value);
-    });
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentStation = urlParams.get('station') || 'all';
+
+  if (filterSelect) {
+    loadStationData(currentStation, filterSelect.value);
     filterSelect.addEventListener("change", () => {
-      loadStationData(stationSelect.value, filterSelect.value);
+      loadStationData(currentStation, filterSelect.value);
     });
     // Auto-actualización no intrusiva cada 60s
     setInterval(() => {
-      loadStationData(stationSelect.value, filterSelect.value).catch(() => {});
+      loadStationData(currentStation, filterSelect.value).catch(() => {});
     }, 60000);
   }
 
@@ -41,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggle = async () => {
       const opening = panelUnc.classList.contains('hidden');
       if (opening) {
-        const st = stationSelect ? stationSelect.value : 'all';
+        const st = currentStation;
         const flt = filterSelect ? filterSelect.value : 'total';
         await renderUnclassified(listUnc, st, flt);
         panelUnc.classList.remove('hidden');
@@ -59,25 +58,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // refrescar contenido si cambian filtros mientras está abierto
     const refreshIfOpen = () => {
       if (!panelUnc.classList.contains('hidden')) {
-        const st = stationSelect ? stationSelect.value : 'all';
+        const st = currentStation;
         const flt = filterSelect ? filterSelect.value : 'total';
         renderUnclassified(listUnc, st, flt).catch(()=>{});
       }
     };
-    stationSelect && stationSelect.addEventListener('change', refreshIfOpen);
     filterSelect && filterSelect.addEventListener('change', refreshIfOpen);
   }
 
-  // Nav dropdown
-  if (navToggle && navMenu){
-    const close = () => { navMenu.classList.add('hidden'); navToggle.setAttribute('aria-expanded','false'); };
-    const open = () => { navMenu.classList.remove('hidden'); navToggle.setAttribute('aria-expanded','true'); };
-    navToggle.addEventListener('click', () => {
-      if (navMenu.classList.contains('hidden')) open(); else close();
-    });
-    document.addEventListener('click', (e) => {
-      if (!navMenu.contains(e.target) && e.target !== navToggle){ close(); }
-    });
+  // Estaciones: botón junto a filtros
+  if (stationsToggle && stationsMenu){
+    const buildHref = (station) => {
+      const p = new URLSearchParams(window.location.search);
+      if (station) p.set('station', station); else p.delete('station');
+      return `${window.location.pathname}?${p.toString()}`.replace(/\?$/, '');
+    };
+    const items = [
+      { name: 'Todas', value: 'all' },
+      { name: 'Portobelo', value: 'Portobelo' },
+      { name: 'Salvio', value: 'Salvio' },
+      { name: 'Futuras estaciones', value: '' },
+    ];
+    stationsMenu.innerHTML = items.map(it => {
+      if (!it.value) return `<div class='nav-btn' style='cursor:default; opacity:.6'>${it.name}</div>`;
+      return `<a href='${buildHref(it.value)}' role='menuitem'>${it.name}</a>`;
+    }).join('');
+    const open = () => { stationsMenu.classList.remove('hidden'); stationsToggle.setAttribute('aria-expanded','true'); };
+    const close = () => { stationsMenu.classList.add('hidden'); stationsToggle.setAttribute('aria-expanded','false'); };
+    stationsToggle.addEventListener('click', () => { const opened = !stationsMenu.classList.contains('hidden'); if (opened) close(); else open(); });
+    document.addEventListener('click', (e) => { if (!stationsMenu.contains(e.target) && e.target !== stationsToggle) close(); });
   }
 
   // User dropdown
@@ -107,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!filtersDrawer.contains(e.target) && e.target !== filtersToggle) closeF();
     });
     // Aplicar y cerrar al cambiar (opcional deja abierto)
-    stationSelect && stationSelect.addEventListener('change', () => closeF());
     filterSelect && filterSelect.addEventListener('change', () => closeF());
   }
 });

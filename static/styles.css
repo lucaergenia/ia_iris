@@ -65,6 +65,11 @@ body {
   white-space: nowrap;
   overflow: hidden; /* oculta texto en colapso */
 }
+/* Submenú de estaciones */
+.menu-group { width: 100%; }
+.menu-group .nav-btn { width: 100%; text-align: left; }
+.menu-sub { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.menu-sub a { padding-left: 18px; font-size: 14px; }
 /* Centrar ítems cuando está colapsado */
 .sidebar:not(:hover) nav a {
   text-align: center;
@@ -78,6 +83,16 @@ body {
   background-color: #333;
   color: #ff9800;
 }
+/* Botón de submenu dentro de la sidebar */
+.sidebar .nav-btn {
+  background: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.sidebar .nav-btn:hover { background:#2a2a2a; color:#ff9800; border-color:#444; }
 
 /* Main */
 .main { flex: 1; padding: 24px 16px; overflow-y: auto; }
@@ -210,6 +225,12 @@ body {
 .userbox { position: relative; display:flex; align-items:center; gap:10px; margin-left: auto; }
 .user-name { color:#ccc; font-size:14px; }
 .user-email { color:#888; font-size:12px; }
+
+/* Usuario fijo al pie de la barra lateral */
+.user-footer { margin-top: auto; width: 100%; border-top: 1px solid #333; padding-top: 12px; }
+.user-footer .nav-btn { width: 100%; margin-top: 8px; }
+/* Ocultar datos de usuario cuando la barra está colapsada */
+.sidebar:not(:hover) .user-footer { display: none; }
 
 /* Avatar button (user icon) */
 .avatar-btn {

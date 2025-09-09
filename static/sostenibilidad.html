@@ -17,6 +17,24 @@
   </head>
 <body>
   <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="/static/logo.png" alt="IRIS" class="logo-img" />
+        <span>IRIS</span>
+      </div>
+      <nav>
+        <a href="/">Dashboard</a>
+        <a href="/conductores.html">Conductores</a>
+        <a href="/sostenibilidad.html" class="active">Sostenibilidad</a>
+        <a href="/streaming/">Streaming</a>
+        <a href="/executive/">Vista ejecutiva</a>
+      </nav>
+      <div class="user-footer">
+        <div id="userFullName" class="user-name">-</div>
+        <div id="userEmail" class="user-email">-</div>
+        <button id="logoutBtn" class="nav-btn" type="button">Salir</button>
+      </div>
+    </aside>
     <main class="main">
       <header class="header">
         <div class="brand">
@@ -24,30 +42,9 @@
           <h1>Sostenibilidad</h1>
         </div>
         <nav class="topnav">
-          <button id="navToggle" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
           <button id="filtersToggle" class="nav-toggle filters-toggle" aria-label="Abrir filtros" aria-expanded="false">Filtros ▾</button>
-          <div id="navMenu" class="nav-menu hidden" role="menu">
-            <a href="/" role="menuitem">Dashboard</a>
-            <a href="/conductores.html" role="menuitem">Conductores</a>
-            <a href="/comparativas.html" role="menuitem">Comparativas</a>
-            <a href="/streaming/" role="menuitem">Streaming</a>
-            <a href="/executive/" role="menuitem">Vista ejecutiva</a>
-          </div>
-          <div class="userbox">
-            <button id="userBtn" class="avatar-btn" aria-haspopup="menu" aria-expanded="false" title="Cuenta">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="12" cy="8" r="4" stroke="#ff9800" stroke-width="2"/>
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" stroke="#ff9800" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <div id="userMenu" class="user-menu hidden" role="menu" aria-label="Cuenta">
-              <div class="user-info">
-                <div id="userFullName" class="user-name">-</div>
-                <div id="userEmail" class="user-email">-</div>
-              </div>
-              <button id="logoutBtn" class="nav-btn" type="button" role="menuitem">Salir</button>
-            </div>
-          </div>
+          <button id="stationsToggle" class="nav-toggle" aria-label="Abrir estaciones" aria-expanded="false">Estaciones ▾</button>
+          <div id="stationsMenu" class="nav-menu hidden" role="menu" aria-label="Estaciones"></div>
         </nav>
       </header>
 
@@ -57,12 +54,6 @@
           <button id="filtersClose" class="btn-action">Cerrar</button>
         </div>
         <div class="drawer-body">
-          <label for="stationSelect">Estación</label>
-          <select id="stationSelect" aria-label="Estación">
-            <option value="all" selected>Todas</option>
-            <option value="Portobelo">Portobelo</option>
-            <option value="Salvio">Salvio</option>
-          </select>
           <label for="filterSelect">Rango</label>
           <select id="filterSelect" aria-label="Rango">
             <option value="total">Total</option>

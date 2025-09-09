@@ -112,24 +112,58 @@ try:
 except Exception as e:  # import error no impide registrar ruta
     stream_logger.warning(f"Import parcial para streaming: {e}")
 
-_camera: Optional[object] = None
+_cameras: dict[str, object] = {}
 
-def _get_camera():
-    global _camera
-    if _RTSPCamera is None or _build_url is None:
+def _rtsp_url_for(host: str | None = None, port: str | int | None = None, profile: str | None = None, url: str | None = None) -> str:
+    """Obtiene una URL RTSP lista:
+    - Si `url` viene completo, se usa tal cual.
+    - Si no, se construye con host/port/profile + credenciales del .env.
+    """
+    if _build_url is None:
         raise RuntimeError("Dependencias de streaming no disponibles")
-    if _camera is None:
-        url = _build_url()
-        stream_logger.info("Inicializando RTSPCamera…")
-        _camera = _RTSPCamera(url)
-    return _camera
+    if url:
+        return url
+    if not host:
+        # Usa build_url() que ya incorpora PROFILE del entorno
+        return _build_url()
+    try:
+        import os as _os
+        user = _os.getenv("CAMERA_USER")
+        password = _os.getenv("CAMERA_PASSWORD")
+        profile = profile or _os.getenv("CAMERA_PROFILE", "profile1")
+        p = str(port or _os.getenv("CAMERA_PORT", "554"))
+        if not (user and password):
+            raise RuntimeError("Faltan CAMERA_USER/CAMERA_PASSWORD para RTSP alterno")
+        return f"rtsp://{user}:{password}@{host}:{p}/{profile}"
+    except Exception as e:
+        raise RuntimeError(f"No se pudo construir URL RTSP: {e}")
+
+def _get_camera(host: str | None = None, port: str | int | None = None, profile: str | None = None, url: str | None = None):
+    if _RTSPCamera is None:
+        raise RuntimeError("Dependencias de streaming no disponibles")
+    full_url = _rtsp_url_for(host, port, profile, url)
+    cam = _cameras.get(full_url)
+    if cam is None:
+        safe = full_url
+        try:
+            # ocultar password si viene en URL
+            if "@" in safe and ":" in safe.split("@")[0]:
+                creds, rest = safe.split("@", 1)
+                user = creds.split(":",1)[0].split("//",1)[-1]
+                safe = f"rtsp://{user}:***@{rest}"
+        except Exception:
+            pass
+        stream_logger.info(f"Inicializando RTSPCamera para {safe}…")
+        cam = _RTSPCamera(full_url)
+        _cameras[full_url] = cam
+    return cam
 
 
 @app.get("/api/stream/rtsp")
-def stream_rtsp(request: Request, width: int | None = None, q: int | None = 95):
-    stream_logger.info(f"Solicitud de stream: width={width}, q={q}")
+def stream_rtsp(request: Request, width: int | None = None, q: int | None = 95, host: str | None = None, port: str | None = None, profile: str | None = None, url: str | None = None):
+    stream_logger.info(f"Solicitud de stream: host={host}, port={port}, profile={profile}, url={bool(url)}, width={width}, q={q}")
     try:
-        cam = _get_camera()
+        cam = _get_camera(host, port, profile, url)
     except Exception as e:
         stream_logger.error(f"No se pudo inicializar cámara: {e}")
         return PlainTextResponse(f"Streaming no inicializado: {e}", status_code=500)
@@ -141,10 +175,10 @@ def stream_rtsp(request: Request, width: int | None = None, q: int | None = 95):
 
 
 @app.get("/api/stream/rtsp/snapshot")
-def stream_snapshot(width: int | None = None, q: int | None = 95):
-    stream_logger.info(f"Solicitud de snapshot: width={width}, q={q}")
+def stream_snapshot(width: int | None = None, q: int | None = 95, host: str | None = None, port: str | None = None, profile: str | None = None, url: str | None = None):
+    stream_logger.info(f"Solicitud de snapshot: host={host}, port={port}, profile={profile}, url={bool(url)}, width={width}, q={q}")
     try:
-        cam = _get_camera()
+        cam = _get_camera(host, port, profile, url)
     except Exception as e:
         stream_logger.error(f"No se pudo inicializar cámara: {e}")
         return PlainTextResponse(f"Streaming no inicializado: {e}", status_code=500)

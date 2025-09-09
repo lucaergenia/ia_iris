@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const stationSelect = document.getElementById('stationSelect');
+  const params = new URLSearchParams(window.location.search);
+  const currentStation = params.get('station') || 'all';
   const filterSelect = document.getElementById('filterSelect');
   const toggleBtn = document.getElementById('toggleUsers');
   const usersSection = document.getElementById('usersSection');
@@ -7,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let usersLoaded = false;
 
   const loadStats = () => {
-    const st = stationSelect.value;
+    const st = currentStation;
     const flt = filterSelect.value;
     loadSummary(st, flt);
     loadRanking(st, flt);
@@ -18,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  stationSelect.addEventListener('change', loadStats);
   filterSelect.addEventListener('change', loadStats);
 
   toggleBtn.addEventListener('click', () => {
@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = hidden ? 'Ver conductores' : 'Ocultar conductores';
     if (!hidden && !usersLoaded) {
       usersLoaded = true;
-      loadDrivers(stationSelect.value, filterSelect.value);
+      loadDrivers(currentStation, filterSelect.value);
     } else if (!hidden) {
-      loadDrivers(stationSelect.value, filterSelect.value);
+      loadDrivers(currentStation, filterSelect.value);
     }
   });
 

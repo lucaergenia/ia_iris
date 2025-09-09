@@ -1,35 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
   bootstrapAuth();
-  const stationSelect = document.getElementById('stationSelect');
+  const params = new URLSearchParams(window.location.search);
+  const currentStation = params.get('station') || 'all';
   const filterSelect = document.getElementById('filterSelect');
-  const navToggle = document.getElementById('navToggle');
-  const navMenu = document.getElementById('navMenu');
   const filtersToggle = document.getElementById('filtersToggle');
   const filtersDrawer = document.getElementById('filtersDrawer');
   const filtersClose = document.getElementById('filtersClose');
-  const userBtn = document.getElementById('userBtn');
-  const userMenu = document.getElementById('userMenu');
 
-  const load = () => loadSustainability(stationSelect.value, filterSelect.value);
+  const load = () => loadSustainability(currentStation, filterSelect.value);
   load();
-  stationSelect.addEventListener('change', load);
   filterSelect.addEventListener('change', load);
   setInterval(() => load().catch(()=>{}), 60000);
 
-  // Nav dropdown
-  if (navToggle && navMenu){
-    const close = () => { navMenu.classList.add('hidden'); navToggle.setAttribute('aria-expanded','false'); };
-    const open = () => { navMenu.classList.remove('hidden'); navToggle.setAttribute('aria-expanded','true'); };
-    navToggle.addEventListener('click', () => { if (navMenu.classList.contains('hidden')) open(); else close(); });
-    document.addEventListener('click', (e) => { if (!navMenu.contains(e.target) && e.target !== navToggle) close(); });
-  }
-  // User dropdown
-  if (userBtn && userMenu){
-    const close = () => { userMenu.classList.add('hidden'); userBtn.setAttribute('aria-expanded','false'); };
-    const open = () => { userMenu.classList.remove('hidden'); userBtn.setAttribute('aria-expanded','true'); };
-    userBtn.addEventListener('click', (e) => { e.stopPropagation(); if (userMenu.classList.contains('hidden')) open(); else close(); });
-    document.addEventListener('click', (e) => { if (!userMenu.contains(e.target) && e.target !== userBtn) close(); });
-  }
   // Filters drawer
   if (filtersToggle && filtersDrawer){
     const openF = () => { filtersDrawer.classList.remove('hidden'); filtersDrawer.setAttribute('aria-hidden','false'); filtersToggle.setAttribute('aria-expanded','true'); };
@@ -37,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     filtersToggle.addEventListener('click', () => { const opened = !filtersDrawer.classList.contains('hidden'); if (opened) closeF(); else openF(); });
     filtersClose && filtersClose.addEventListener('click', closeF);
     document.addEventListener('click', (e)=>{ if (filtersDrawer.classList.contains('hidden')) return; if (!filtersDrawer.contains(e.target) && e.target !== filtersToggle) closeF(); });
-    stationSelect.addEventListener('change', () => closeF());
     filterSelect.addEventListener('change', () => closeF());
   }
 });
