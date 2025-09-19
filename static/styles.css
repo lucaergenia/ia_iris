@@ -229,6 +229,27 @@ body {
 /* Usuario fijo al pie de la barra lateral */
 .user-footer { margin-top: auto; width: 100%; border-top: 1px solid #333; padding-top: 12px; }
 .user-footer .nav-btn { width: 100%; margin-top: 8px; }
+
+/* ===== Mobile sidebar behavior ===== */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform .2s ease;
+    z-index: 200;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar:not(.open) { width: 0; padding-left: 0; padding-right: 0; }
+  .sidebar .logo-img { width: 96px; }
+  .sidebar .logo span { display: none; }
+  .sidebar nav a { font-size: 16px; text-align: left; padding-left: 12px; }
+  .main { padding: 16px; }
+}
+
+.sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 180; }
+.hidden { display: none; }
 /* Ocultar datos de usuario cuando la barra está colapsada */
 .sidebar:not(:hover) .user-footer { display: none; }
 

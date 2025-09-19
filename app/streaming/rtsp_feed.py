@@ -30,7 +30,18 @@ class RTSPCamera:
 
     def _open(self) -> bool:
         if os.getenv("OPENCV_FFMPEG_CAPTURE_OPTIONS") is None:
-            os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;tcp|stimeout;5000000|reorder_queue_size;0"
+            os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = (
+                "rtsp_transport;tcp|"
+                "stimeout;5000000|"
+                "reorder_queue_size;0|"
+                "fflags;discardcorrupt|"
+                "fflags;nobuffer|"
+                "flags;low_delay|"
+                "max_delay;500000|"
+                "probesize;32000|"
+                "analyzeduration;0|"
+                "allowed_media_types;video"
+            )
         logger.info("Abriendo RTSP con OpenCV+FFMPEG…")
         self.cap = cv2.VideoCapture(self.rtsp_url, cv2.CAP_FFMPEG)
         try:

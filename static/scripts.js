@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const filtersClose = document.getElementById('filtersClose');
   const userBtn = document.getElementById('userBtn');
   const userMenu = document.getElementById('userMenu');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const sidebarBackdrop = document.getElementById('sidebarBackdrop');
   const stationsToggle = document.getElementById('stationsToggle');
   const stationsMenu = document.getElementById('stationsMenu');
   const btnUnclassified = document.getElementById("btnUnclassified");
@@ -117,6 +120,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     // Aplicar y cerrar al cambiar (opcional deja abierto)
     filterSelect && filterSelect.addEventListener('change', () => closeF());
+  }
+
+  // Mobile sidebar toggle
+  if (mobileMenuBtn && sidebar){
+    const openSB = () => { sidebar.classList.add('open'); sidebarBackdrop && sidebarBackdrop.classList.remove('hidden'); };
+    const closeSB = () => { sidebar.classList.remove('open'); sidebarBackdrop && sidebarBackdrop.classList.add('hidden'); };
+    mobileMenuBtn.addEventListener('click', (e)=>{ e.stopPropagation();
+      if (sidebar.classList.contains('open')) closeSB(); else openSB();
+    });
+    sidebarBackdrop && sidebarBackdrop.addEventListener('click', closeSB);
+    document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeSB(); });
   }
 });
 

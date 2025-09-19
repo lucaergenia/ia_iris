@@ -7,6 +7,7 @@ from app.stats_flow.pipeline import run_pipeline
 import logging
 
 from app.api import router as api_router
+from app.vision import router as vision_router
 from app.services.sync_etecnic import sync_etecnic_data
 from app.services.station_stats import run_station_pipeline
 from app.services.executive import materialize_all_scopes
@@ -56,6 +57,7 @@ app.add_middleware(
 
 # Registrar las rutas de stats con prefijo /api/stats
 app.include_router(api_router, prefix="/api/stats")
+app.include_router(vision_router)  # /api/vision
 
 # ============ Simple auth middleware (cookie-based) ============
 from app.auth.security import verify_access_token

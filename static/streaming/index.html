@@ -28,6 +28,7 @@
 </head>
 <body>
   <div class="dashboard">
+    <div id="sidebarBackdrop" class="sidebar-backdrop hidden"></div>
     <aside class="sidebar">
       <div class="logo">
         <img src="/static/logo.png" alt="IRIS" class="logo-img" />
@@ -39,6 +40,7 @@
         <a href="/sostenibilidad.html">Sostenibilidad</a>
         <a href="/streaming/" class="active">Streaming</a>
         <a href="/executive/">Vista ejecutiva</a>
+        <a href="/vision/">Visión IA</a>
       </nav>
       <div class="user-footer">
         <div id="userFullName" class="user-name">-</div>
@@ -53,6 +55,7 @@
           <h1>Streaming RTSP</h1>
         </div>
         <nav class="topnav">
+          <button id="mobileMenuBtn" class="nav-toggle" aria-label="Abrir menú">☰</button>
           <button id="stationsToggle" class="nav-toggle" aria-label="Abrir estaciones" aria-expanded="false">Estaciones ▾</button>
           <div id="stationsMenu" class="nav-menu hidden" role="menu" aria-label="Estaciones"></div>
         </nav>

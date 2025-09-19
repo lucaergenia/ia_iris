@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visión – Ingresos EV/PHEV</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="/static/hardening.js"></script>
+  <style>
+    .grid { display:grid; grid-template-columns: repeat(2, minmax(280px,1fr)); gap:12px; }
+    .tile { background:#1e1e1e; border:1px solid #333; border-radius:10px; padding:8px; }
+    .tile h4 { color:#4caf50; margin:0 0 6px; } /* verde para énfasis */
+    .tile img { width:100%; height:auto; border-radius:8px; }
+    .kpis { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:12px; margin: 12px 0; }
+    .kpi { background:#1e1e1e; border-radius:10px; padding:12px; text-align:center; }
+    .kpi h3 { color:#4caf50; font-size:14px; margin-bottom:8px; }
+    .kpi p { font-size:24px; font-weight:800; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div id="sidebarBackdrop" class="sidebar-backdrop hidden"></div>
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="/static/logo.png" alt="IRIS" class="logo-img" />
+        <span>IRIS</span>
+      </div>
+      <nav>
+        <a href="/">Dashboard</a>
+        <a href="/conductores.html">Conductores</a>
+        <a href="/sostenibilidad.html">Sostenibilidad</a>
+        <a href="/streaming/">Streaming</a>
+        <a href="/executive/">Vista ejecutiva</a>
+        <a href="/vision/" class="active">Visión IA</a>
+      </nav>
+      <div class="user-footer">
+        <div id="userFullName" class="user-name">-</div>
+        <div id="userEmail" class="user-email">-</div>
+        <button id="logoutBtn" class="nav-btn" type="button">Salir</button>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="header">
+        <div class="brand">
+          <img src="/static/logo.png" class="brand-logo" alt="Logo" />
+          <h1>Visión – Ingresos EV/PHEV</h1>
+        </div>
+        <nav class="topnav">
+          <button id="mobileMenuBtn" class="nav-toggle" aria-label="Abrir menú">☰</button>
+          <button id="start" class="nav-toggle">Iniciar fuentes</button>
+        </nav>
+      </header>
+
+      <section class="kpis">
+        <div class="kpi"><h3>Entradas (10m)</h3><p id="kTotal">0</p></div>
+        <div class="kpi"><h3>EV</h3><p id="kEV">0</p></div>
+        <div class="kpi"><h3>PHEV</h3><p id="kPHEV">0</p></div>
+      </section>
+
+      <section class="grid">
+        <div class="tile"><h4>556</h4><img id="v1" /></div>
+        <div class="tile"><h4>558</h4><img id="v2" /></div>
+      </section>
+
+      <section class="entries" style="margin-top:16px">
+        <h3>Últimas entradas</h3>
+        <ul id="list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/scripts.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      bootstrapAuth();
+      const S1 = 'rtsp://190.159.37.81:556/profile1';
+      const S2 = 'rtsp://190.159.37.81:558/profile1';
+
+      async function start(){
+        // Un solo ROI que cubre todo el frame
+        const rois1 = JSON.stringify([[0.0, 0.0, 1.0, 1.0]]);
+        const rois2 = JSON.stringify([[0.0, 0.0, 1.0, 1.0]]);
+
+        await fetch(`/api/vision/sources?url=${encodeURIComponent(S1)}&rois=${encodeURIComponent(rois1)}`, {method:'POST'});
+        await fetch(`/api/vision/sources?url=${encodeURIComponent(S2)}&rois=${encodeURIComponent(rois2)}`, {method:'POST'});
+
+        // Forzamos que debug dibuje cuadros verdes en autos detectados
+        document.getElementById('v1').src = `/api/vision/debug?url=${encodeURIComponent(S1)}&w=960&q=95&draw=1&color=green`;
+        document.getElementById('v2').src = `/api/vision/debug?url=${encodeURIComponent(S2)}&w=960&q=95&draw=1&color=green`;
+      }
+
+      async function refresh(){
+        const s = await (await fetch('/api/vision/summary?window_sec=600')).json();
+        document.getElementById('kTotal').textContent = s.total||0;
+        document.getElementById('kEV').textContent = s.ev||0;
+        document.getElementById('kPHEV').textContent = s.phev||0;
+        const items = await (await fetch('/api/vision/entries?since_sec=3600&limit=20')).json();
+        const ul = document.getElementById('list');
+        ul.innerHTML = (items.items||[]).map(e => {
+          const hora = new Date(e.ts*1000).toLocaleTimeString();
+          const plate = e.plate || '-';
+          const modelLabel = [e.brand, e.model].filter(Boolean).join(' ').trim() || 'Sin identificar';
+          return `<li>${hora} — Matrícula detectada ${plate} — Modelo ${modelLabel}</li>`;
+        }).join('');
+      }
+
+      document.getElementById('start').addEventListener('click', start);
+      start();
+      setInterval(refresh, 3000);
+      refresh();
+    });
+  </script>
+</body>
+</html>
